@@ -388,7 +388,7 @@ ${formData.mensaje}
                     <Instagram className="w-6 h-6" />
                   </a>
                   <a
-                    href="https://wa.me/573001234567"
+                    href="https://wa.me/573013547422"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-14 h-14 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center text-white transition-all hover:scale-110"
@@ -449,7 +449,7 @@ ${formData.mensaje}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
-              href="https://wa.me/573001234567"
+              href="https://wa.me/573013547422"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white text-yamid-palm hover:bg-yamid-sand px-8 py-4 rounded-lg font-bold transition-all transform hover:scale-105 inline-flex items-center"

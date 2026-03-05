@@ -23,7 +23,7 @@ export default function TourDetailClient({ tour }: TourDetailClientProps) {
     const name = (document.getElementById('name') as HTMLInputElement).value;
     const phone = (document.getElementById('phone') as HTMLInputElement).value;
     
-    const yourNumber = '573001234567';
+    const yourNumber = '573013547422';
     const total = tour.price * parseInt(people);
     
     const message = `🌴 *NUEVA RESERVA - YAMID Tours* 🌴
@@ -36,7 +36,7 @@ export default function TourDetailClient({ tour }: TourDetailClientProps) {
   };
 
   const handleConsult = () => {
-    const yourNumber = '573001234567';
+    const yourNumber = '57301 3547422';
     const message = `Hola YAMID Tours 👋\nTengo una consulta sobre: ${tour.name}`;
     const url = `https://api.whatsapp.com/send?phone=${yourNumber}&text=${encodeURIComponent(message)}`;
     window.open(url, '_blank', 'noopener,noreferrer');
