@@ -205,7 +205,7 @@ export default function TourDetail() {
     const name = (document.getElementById('name') as HTMLInputElement).value;
     const phone = (document.getElementById('phone') as HTMLInputElement).value;
     
-    const yourNumber = '573001234567'; // ← Cambia por tu número real
+    const yourNumber = '573013547422'; // ← Cambia por tu número real
     const total = tour.price * parseInt(people);
     
     const message = `🌴 *NUEVA RESERVA - YAMID Tours* 🌴
