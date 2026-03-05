@@ -521,7 +521,7 @@ Tengo una consulta sobre el tour:
         slides={photos}
         index={currentImageIndex}
         plugins={[Thumbnails, Zoom]}
-        thumbnails={{ show: true }}
+        thumbnails={{ showToggle: true }}
         zoom={{ maxZoomPixelRatio: 3 }}
       />
     </main>
