@@ -45,8 +45,13 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/casas" className="text-gray-300 hover:text-yamid-gold transition-colors">
-                  Casas de Vacaciones
+                <Link href="/transporte" className="text-gray-300 hover:text-yamid-gold transition-colors">
+                  Transportes
+                </Link>
+              </li>
+              <li>
+                <Link href="/hospedaje" className="text-gray-300 hover:text-yamid-gold transition-colors">
+                  Hospedajes
                 </Link>
               </li>
             </ul>
@@ -93,7 +98,7 @@ export default function Footer() {
               </li>
               <li className="flex items-start space-x-2">
                 <span>✉️</span>
-                <span>info@yamotours.com</span>
+                <span>comercial@yamotours.com</span>
               </li>
               <li className="flex items-start space-x-2">
                 <span>⏰</span>

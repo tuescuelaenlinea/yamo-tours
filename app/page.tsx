@@ -231,44 +231,71 @@ export default function Home() {
       </section>
 
       {/* Buscador Flotante */}
-      <section className="relative -mt-16 z-20">
-        <div className="container mx-auto px-4">
-          <div className="bg-white p-6 rounded-lg shadow-2xl max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="relative">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Destino</label>
-                <input
-                  type="text"
-                  placeholder="¿A dónde quieres ir?"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
-                <input
-                  type="date"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Personas</label>
-                <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20">
-                  <option value="1">1 Persona</option>
-                  <option value="2">2 Personas</option>
-                  <option value="3">3 Personas</option>
-                  <option value="4">4 Personas</option>
-                  <option value="5+">5+ Personas</option>
-                </select>
-              </div>
-              <div className="flex items-end">
-                <button className="w-full bg-yamid-gold hover:bg-yamid-goldDark text-white px-6 py-3 rounded-lg font-semibold transition-colors">
-                  Buscar Tours
-                </button>
-              </div>
-            </div>
-          </div>
+<section className="relative -mt-16 z-20">
+  <div className="container mx-auto px-4">
+    <form 
+      onSubmit={(e) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const destino = formData.get('destino') as string;
+        const fecha = formData.get('fecha') as string;
+        const personas = formData.get('personas') as string;
+        
+        // Construir URL con parámetros de búsqueda
+        const params = new URLSearchParams();
+        if (destino) params.set('q', destino);
+        if (fecha) params.set('fecha', fecha);
+        if (personas) params.set('personas', personas);
+        
+        // Redirigir a la página de tours con los parámetros
+        window.location.href = `/tours?${params.toString()}`;
+      }}
+      className="bg-white p-6 rounded-lg shadow-2xl max-w-4xl mx-auto"
+    >
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="relative">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Destino</label>
+          <input
+            type="text"
+            name="destino"
+            placeholder="¿A dónde quieres ir?"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
+          />
         </div>
-      </section>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
+          <input
+            type="date"
+            name="fecha"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Personas</label>
+          <select 
+            name="personas"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
+          >
+            <option value="">Personas</option>
+            <option value="1">1 Persona</option>
+            <option value="2">2 Personas</option>
+            <option value="3">3 Personas</option>
+            <option value="4">4 Personas</option>
+            <option value="5+">5+ Personas</option>
+          </select>
+        </div>
+        <div className="flex items-end">
+          <button 
+            type="submit"
+            className="w-full bg-yamid-gold hover:bg-yamid-goldDark text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+          >
+            Buscar Tours
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
 
       {/* Tours Populares */}
       <section className="py-20">

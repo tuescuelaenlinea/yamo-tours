@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
-import { Search, Filter, Clock, MapPin, Star, DollarSign, Calendar } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Search, Filter, Clock, MapPin, Star, DollarSign } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 
 // ✅ Base de datos completa de tours
 const allTours = [
@@ -147,38 +148,67 @@ const categories = [
 ];
 
 export default function ToursPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('todos');
+  const searchParams = useSearchParams();
+  
+  // ✅ Estado inicializado desde URL params
+  const [searchTerm, setSearchTerm] = useState(() => {
+    return searchParams.get('q') || '';
+  });
+  const [selectedCategory, setSelectedCategory] = useState(() => {
+    return searchParams.get('categoria') || 'todos';
+  });
   const [priceRange, setPriceRange] = useState('todos');
   const [sortBy, setSortBy] = useState('popularity');
 
-  // Filtrar tours
-  const filteredTours = allTours.filter(tour => {
-    // Búsqueda por texto
-    const matchesSearch = tour.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         tour.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         tour.description.toLowerCase().includes(searchTerm.toLowerCase());
+  // ✅ Sincronizar URL params con estado (cuando cambia la URL)
+  useEffect(() => {
+    const q = searchParams.get('q');
+    const categoria = searchParams.get('categoria');
     
-    // Categoría
-    const matchesCategory = selectedCategory === 'todos' || tour.category === selectedCategory;
-    
-    // Rango de precio
-    let matchesPrice = true;
-    if (priceRange === 'economico') matchesPrice = tour.price < 100000;
-    else if (priceRange === 'medio') matchesPrice = tour.price >= 100000 && tour.price < 150000;
-    else if (priceRange === 'premium') matchesPrice = tour.price >= 150000;
-    
-    return matchesSearch && matchesCategory && matchesPrice;
-  });
+    if (q && q !== searchTerm) setSearchTerm(q);
+    if (categoria && categoria !== selectedCategory) setSelectedCategory(categoria);
+  }, [searchParams]);
 
-  // Ordenar tours
-  const sortedTours = [...filteredTours].sort((a, b) => {
-    if (sortBy === 'price-asc') return a.price - b.price;
-    if (sortBy === 'price-desc') return b.price - a.price;
-    if (sortBy === 'rating') return b.rating - a.rating;
-    if (sortBy === 'featured') return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
-    return 0;
-  });
+  // ✅ Filtrar tours con useMemo para mejor rendimiento
+  const filteredTours = useMemo(() => {
+    return allTours.filter(tour => {
+      // Búsqueda por texto (nombre, ubicación, descripción)
+      const matchesSearch = !searchTerm || 
+        tour.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        tour.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        tour.description.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      // Categoría
+      const matchesCategory = selectedCategory === 'todos' || tour.category === selectedCategory;
+      
+      // Rango de precio
+      let matchesPrice = true;
+      if (priceRange === 'economico') matchesPrice = tour.price < 100000;
+      else if (priceRange === 'medio') matchesPrice = tour.price >= 100000 && tour.price < 150000;
+      else if (priceRange === 'premium') matchesPrice = tour.price >= 150000;
+      
+      return matchesSearch && matchesCategory && matchesPrice;
+    });
+  }, [searchTerm, selectedCategory, priceRange]);
+
+  // ✅ Ordenar tours
+  const sortedTours = useMemo(() => {
+    return [...filteredTours].sort((a, b) => {
+      if (sortBy === 'price-asc') return a.price - b.price;
+      if (sortBy === 'price-desc') return b.price - a.price;
+      if (sortBy === 'rating') return b.rating - a.rating;
+      if (sortBy === 'featured') return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+      return 0;
+    });
+  }, [filteredTours, sortBy]);
+
+  // ✅ Limpiar filtros
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedCategory('todos');
+    setPriceRange('todos');
+    setSortBy('popularity');
+  };
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -265,15 +295,11 @@ export default function ToursPage() {
           <div className="mt-4 flex items-center justify-between">
             <p className="text-gray-600">
               <span className="font-bold text-yamid-palm">{sortedTours.length}</span> tours encontrados
+              {searchTerm && <span className="ml-2">para "<strong>{searchTerm}</strong>"</span>}
             </p>
             {(searchTerm || selectedCategory !== 'todos' || priceRange !== 'todos') && (
               <button
-                onClick={() => {
-                  setSearchTerm('');
-                  setSelectedCategory('todos');
-                  setPriceRange('todos');
-                  setSortBy('popularity');
-                }}
+                onClick={clearFilters}
                 className="text-yamid-gold hover:underline text-sm font-medium"
               >
                 Limpiar filtros
@@ -292,14 +318,12 @@ export default function ToursPage() {
               No encontramos tours
             </h3>
             <p className="text-gray-600 mb-6">
-              Intenta con otros filtros o términos de búsqueda
+              {searchTerm 
+                ? `Intenta con otra búsqueda para "${searchTerm}"` 
+                : 'Intenta con otros filtros o términos de búsqueda'}
             </p>
             <button
-              onClick={() => {
-                setSearchTerm('');
-                setSelectedCategory('todos');
-                setPriceRange('todos');
-              }}
+              onClick={clearFilters}
               className="bg-yamid-gold hover:bg-yamid-goldDark text-white px-8 py-3 rounded-lg font-semibold transition-colors"
             >
               Ver todos los tours
