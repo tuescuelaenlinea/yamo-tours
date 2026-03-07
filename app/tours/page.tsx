@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
 import { Search, Filter, Clock, MapPin, Star, DollarSign } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 
@@ -147,7 +147,8 @@ const categories = [
   { id: 'aventura', name: 'Aventura', icon: '🌋' }
 ];
 
-export default function ToursPage() {
+// ✅ Componente interno que usa useSearchParams
+function ToursContent() {
   const searchParams = useSearchParams();
   
   // ✅ Estado inicializado desde URL params
@@ -160,28 +161,25 @@ export default function ToursPage() {
   const [priceRange, setPriceRange] = useState('todos');
   const [sortBy, setSortBy] = useState('popularity');
 
-  // ✅ Sincronizar URL params con estado (cuando cambia la URL)
+  // ✅ Sincronizar URL params con estado
   useEffect(() => {
     const q = searchParams.get('q');
     const categoria = searchParams.get('categoria');
     
     if (q && q !== searchTerm) setSearchTerm(q);
     if (categoria && categoria !== selectedCategory) setSelectedCategory(categoria);
-  }, [searchParams]);
+  }, [searchParams, searchTerm, selectedCategory]);
 
-  // ✅ Filtrar tours con useMemo para mejor rendimiento
+  // ✅ Filtrar tours con useMemo
   const filteredTours = useMemo(() => {
     return allTours.filter(tour => {
-      // Búsqueda por texto (nombre, ubicación, descripción)
       const matchesSearch = !searchTerm || 
         tour.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         tour.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
         tour.description.toLowerCase().includes(searchTerm.toLowerCase());
       
-      // Categoría
       const matchesCategory = selectedCategory === 'todos' || tour.category === selectedCategory;
       
-      // Rango de precio
       let matchesPrice = true;
       if (priceRange === 'economico') matchesPrice = tour.price < 100000;
       else if (priceRange === 'medio') matchesPrice = tour.price >= 100000 && tour.price < 150000;
@@ -216,9 +214,7 @@ export default function ToursPage() {
       <section className="relative bg-gradient-to-br from-yamid-palm to-yamid-gold py-20">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative container mx-auto px-4 text-center text-white">
-          <h1 className="text-5xl font-bold mb-4">
-            Nuestros Tours 🏝️
-          </h1>
+          <h1 className="text-5xl font-bold mb-4">Nuestros Tours 🏝️</h1>
           <p className="text-xl max-w-2xl mx-auto opacity-95">
             Descubre las mejores experiencias en el Caribe colombiano
           </p>
@@ -229,7 +225,6 @@ export default function ToursPage() {
       <section className="bg-white shadow-md sticky top-20 z-40 py-6">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-            
             {/* Buscador */}
             <div className="relative w-full lg:w-96">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -244,50 +239,36 @@ export default function ToursPage() {
 
             {/* Filtros */}
             <div className="flex flex-wrap gap-3 items-center">
-              {/* Categoría */}
-              <div className="relative">
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-3 pr-10 focus:outline-none focus:border-yamid-gold cursor-pointer"
-                >
-                  {categories.map(cat => (
-                    <option key={cat.id} value={cat.id}>{cat.icon} {cat.name}</option>
-                  ))}
-                </select>
-                <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-              </div>
-
-              {/* Precio */}
-              <div className="relative">
-                <select
-                  value={priceRange}
-                  onChange={(e) => setPriceRange(e.target.value)}
-                  className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-3 pr-10 focus:outline-none focus:border-yamid-gold cursor-pointer"
-                >
-                  <option value="todos">💰 Todos los precios</option>
-                  <option value="economico">$ Económico (&lt; $100k)</option>
-                  <option value="medio">$$ Medio ($100k - $150k)</option>
-                  <option value="premium">$$$ Premium (&gt; $150k)</option>
-                </select>
-                <DollarSign className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-              </div>
-
-              {/* Ordenar */}
-              <div className="relative">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-3 pr-10 focus:outline-none focus:border-yamid-gold cursor-pointer"
-                >
-                  <option value="popularity">⭐ Popularidad</option>
-                  <option value="rating">🏆 Mejor calificados</option>
-                  <option value="price-asc">💰 Menor precio</option>
-                  <option value="price-desc">💎 Mayor precio</option>
-                  <option value="featured">✨ Destacados</option>
-                </select>
-                <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-              </div>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-3 pr-10 focus:outline-none focus:border-yamid-gold cursor-pointer"
+              >
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.icon} {cat.name}</option>
+                ))}
+              </select>
+              <select
+                value={priceRange}
+                onChange={(e) => setPriceRange(e.target.value)}
+                className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-3 pr-10 focus:outline-none focus:border-yamid-gold cursor-pointer"
+              >
+                <option value="todos">💰 Todos los precios</option>
+                <option value="economico">$ Económico (&lt; $100k)</option>
+                <option value="medio">$$ Medio ($100k - $150k)</option>
+                <option value="premium">$$$ Premium (&gt; $150k)</option>
+              </select>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-3 pr-10 focus:outline-none focus:border-yamid-gold cursor-pointer"
+              >
+                <option value="popularity">⭐ Popularidad</option>
+                <option value="rating">🏆 Mejor calificados</option>
+                <option value="price-asc">💰 Menor precio</option>
+                <option value="price-desc">💎 Mayor precio</option>
+                <option value="featured">✨ Destacados</option>
+              </select>
             </div>
           </div>
 
@@ -314,9 +295,7 @@ export default function ToursPage() {
         {sortedTours.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-6xl mb-4">🔍</p>
-            <h3 className="text-2xl font-bold text-yamid-palm mb-2">
-              No encontramos tours
-            </h3>
+            <h3 className="text-2xl font-bold text-yamid-palm mb-2">No encontramos tours</h3>
             <p className="text-gray-600 mb-6">
               {searchTerm 
                 ? `Intenta con otra búsqueda para "${searchTerm}"` 
@@ -337,7 +316,6 @@ export default function ToursPage() {
                 href={`/tours/${tour.slug}`}
                 className="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 hover:border-yamid-gold"
               >
-                {/* Imagen del tour */}
                 <div className="relative h-56 overflow-hidden">
                   <Image 
                     src={tour.image} 
@@ -358,8 +336,6 @@ export default function ToursPage() {
                       }
                     }}
                   />
-                  
-                  {/* Badges */}
                   <div className="absolute top-4 left-4 flex gap-2">
                     {tour.featured && (
                       <span className="bg-yamid-gold text-white px-3 py-1 rounded-full text-xs font-semibold">
@@ -370,41 +346,26 @@ export default function ToursPage() {
                       {tour.duration}
                     </span>
                   </div>
-                  
-                  {/* Rating */}
                   <div className="absolute top-4 right-4 bg-white px-2 py-1 rounded-full shadow-lg flex items-center gap-1">
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                     <span className="text-sm font-bold">{tour.rating}</span>
                   </div>
                 </div>
-
-                {/* Contenido */}
                 <div className="p-6">
-                  {/* Ubicación */}
                   <div className="flex items-center text-gray-500 text-sm mb-2">
                     <MapPin className="w-4 h-4 mr-1" />
                     <span>{tour.location}</span>
                   </div>
-
-                  {/* Nombre */}
                   <h3 className="text-xl font-bold text-yamid-palm mb-2 group-hover:text-yamid-gold transition-colors line-clamp-1">
                     {tour.name}
                   </h3>
-
-                  {/* Descripción */}
-                  <p className="text-gray-600 mb-4 line-clamp-2 text-sm">
-                    {tour.description}
-                  </p>
-
-                  {/* Reviews */}
+                  <p className="text-gray-600 mb-4 line-clamp-2 text-sm">{tour.description}</p>
                   <div className="flex items-center text-sm text-gray-500 mb-4">
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400 mr-1" />
                     <span>{tour.rating}</span>
                     <span className="mx-2">•</span>
                     <span>{tour.reviews} reseñas</span>
                   </div>
-
-                  {/* Precio y CTA */}
                   <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                     <div>
                       <span className="text-xs text-gray-500">Desde</span>
@@ -438,9 +399,6 @@ export default function ToursPage() {
               className="bg-yamid-gold hover:bg-yamid-goldDark text-white px-8 py-4 rounded-lg font-semibold transition-colors inline-flex items-center"
             >
               Contactar Ahora
-              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
             </Link>
             <Link 
               href="/destinos"
@@ -452,5 +410,21 @@ export default function ToursPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+// ✅ Componente principal que envuelve en Suspense
+export default function ToursPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yamid-gold mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando tours...</p>
+        </div>
+      </div>
+    }>
+      <ToursContent />
+    </Suspense>
   );
 }
