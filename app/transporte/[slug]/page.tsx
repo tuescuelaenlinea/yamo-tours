@@ -142,7 +142,7 @@ const transportData: Record<string, any> = {
       'Edad mínima: Niños aceptados con supervisión',
       'Documentación: Identificación requerida para todos los pasajeros'
     ],
-    images: Array.from({ length: 5 }, (_, i) => `/images/transporte/Bahaire-29-pies/${i + 1}.jpg`),
+    images: Array.from({ length: 5 }, (_, i) => `/images/transporte/bahaire-29-pies/${i + 1}.jpg`),
     heroImage: '/images/transporte/Bahaire.jpg',
     emoji: '🚤',
     category: 'bote'

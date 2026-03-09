@@ -31,7 +31,7 @@ export default function Header() {
               className="object-contain"
             />
             <div>
-              <h1 className="text-2xl font-bold text-yamid-palm">YAMID Tours</h1>
+              <h1 className="text-2xl font-bold text-yamid-palm">YAMOTours</h1>
               <p className="text-xs text-yamid-gold-dark">Tu aventura en el Caribe</p>
             </div>
           </Link>

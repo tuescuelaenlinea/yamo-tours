@@ -68,7 +68,7 @@ const transportServices = [
     priceText: 'Por acordar',
     rating: 4.6,
     reviews: 28,
-    image: '/images/transporte/Bahaire.jpg',
+    image: '/images/transporte/bahaire.jpg',
     emoji: '🚤',
     capacity: 10,
     duration: '9:00 AM - 4:00 PM',

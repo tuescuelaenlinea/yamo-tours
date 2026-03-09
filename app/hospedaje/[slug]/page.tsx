@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useState, Suspense } from 'react';
+import { useParams, useSearchParams } from 'next/navigation';
 import { 
-  MapPin, Star, Bed, Users, Wifi, Car, Coffee, 
-  CheckCircle, XCircle, MessageCircle, ArrowLeft 
+  MapPin, Star, Users, Bed, CheckCircle, XCircle, 
+  MessageCircle, ArrowLeft, Wifi, Droplet, Coffee
 } from 'lucide-react';
 import Lightbox from 'yet-another-react-lightbox';
 import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
@@ -14,146 +14,688 @@ import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import 'yet-another-react-lightbox/styles.css';
 import 'yet-another-react-lightbox/plugins/thumbnails.css';
 
-// ✅ Base de datos de hospedajes
+// ✅ Base de datos COMPLETA de hospedajes
 const accommodationsData: Record<string, any> = {
-  'villa-caribe': {
-    slug: 'villa-caribe',
-    name: 'Villa Caribe Luxury',
-    type: 'villa',
-    description: 'Villa exclusiva con piscina privada, vista al mar y servicio de concierge. Perfecta para familias o grupos que buscan privacidad y lujo en Cartagena.',
-    location: 'Bocagrande, Cartagena',
-    price: 450000,
-    rating: 4.9,
-    reviews: 87,
-    capacity: 8,
-    bedrooms: 4,
-    bathrooms: 3,
-    checkIn: '3:00 PM',
-    checkOut: '11:00 AM',
-    amenities: [
-      { name: 'WiFi de alta velocidad', icon: Wifi, included: true },
-      { name: 'Piscina privada', icon: () => <span>🏊</span>, included: true },
-      { name: 'Aire acondicionado', icon: () => <span>❄️</span>, included: true },
-      { name: 'Cocina equipada', icon: Coffee, included: true },
-      { name: 'Parqueo privado', icon: Car, included: true },
-      { name: 'Servicio de limpieza diario', icon: CheckCircle, included: true },
-      { name: 'Concierge 24/7', icon: CheckCircle, included: true },
-      { name: 'Transporte aeropuerto', icon: Car, included: false }
-    ],
-    images: [
-      '/images/hospedaje/villa-caribe/1.jpg',
-      '/images/hospedaje/villa-caribe/2.jpg',
-      '/images/hospedaje/villa-caribe/3.jpg',
-      '/images/hospedaje/villa-caribe/4.jpg'
-    ],
-    heroImage: '/images/hospedaje/villa-caribe/hero.jpg',
-    emoji: '🏡'
-  },
-  'casa-colonial': {
-    slug: 'casa-colonial',
-    name: 'Casa Colonial Getsemaní',
-    type: 'casa',
-    description: 'Encantadora casa colonial restaurada en el corazón del barrio Getsemaní. Arquitectura tradicional con comodidades modernas.',
-    location: 'Getsemaní, Cartagena',
-    price: 280000,
-    rating: 4.8,
-    reviews: 124,
-    capacity: 6,
-    bedrooms: 3,
-    bathrooms: 2,
-    checkIn: '3:00 PM',
-    checkOut: '11:00 AM',
-    amenities: [
-      { name: 'WiFi', icon: Wifi, included: true },
-      { name: 'Aire acondicionado', icon: () => <span>❄️</span>, included: true },
-      { name: 'Cocina equipada', icon: Coffee, included: true },
-      { name: 'Terraza privada', icon: () => <span>🌅</span>, included: true },
-      { name: 'Lavadora', icon: CheckCircle, included: true },
-      { name: 'Parqueo', icon: Car, included: false }
-    ],
-    images: [
-      '/images/hospedaje/casa-colonial/1.jpg',
-      '/images/hospedaje/casa-colonial/2.jpg',
-      '/images/hospedaje/casa-colonial/3.jpg',
-      '/images/hospedaje/casa-colonial/4.jpg'
-    ],
-    heroImage: '/images/hospedaje/casa-colonial/hero.jpg',
-    emoji: '🏠'
-  },
-  'finca-tayrona': {
-    slug: 'finca-tayrona',
-    name: 'Finca Ecológica Tayrona',
-    type: 'finca',
-    description: 'Retiro ecológico cerca del Parque Tayrona, ideal para desconectar y conectar con la naturaleza. Experiencia auténtica en la Sierra Nevada.',
-    location: 'Santa Marta',
-    price: 320000,
-    rating: 4.7,
-    reviews: 56,
-    capacity: 12,
-    bedrooms: 5,
-    bathrooms: 4,
-    checkIn: '2:00 PM',
-    checkOut: '12:00 PM',
-    amenities: [
-      { name: 'WiFi en áreas comunes', icon: Wifi, included: true },
-      { name: 'Piscina natural', icon: () => <span>🏊</span>, included: true },
-      { name: 'Cocina compartida', icon: Coffee, included: true },
-      { name: 'Parqueo', icon: Car, included: true },
-      { name: 'Jardín ecológico', icon: () => <span>🌺</span>, included: true },
-      { name: 'Tours de café', icon: () => <span>☕</span>, included: true },
-      { name: 'Aire acondicionado', icon: () => <span>❄️</span>, included: false }
-    ],
-    images: [
-      '/images/hospedaje/finca-tayrona/1.jpg',
-      '/images/hospedaje/finca-tayrona/2.jpg',
-      '/images/hospedaje/finca-tayrona/3.jpg',
-      '/images/hospedaje/finca-tayrona/4.jpg'
-    ],
-    heroImage: '/images/hospedaje/finca-tayrona/hero.jpg',
-    emoji: '🌴'
-  },
-  'hotel-boutique': {
-    slug: 'hotel-boutique',
-    name: 'Hotel Boutique Muralla',
+  // ==================== HOTEL NENA BEACH - BARÚ ====================
+  'nena-beach-suite-vista-al-mar': {
+    slug: 'nena-beach-suite-vista-al-mar',
+    name: 'Hotel Nena Beach - Suite Vista Al Mar',
     type: 'hotel',
-    description: 'Hotel boutique dentro de la ciudad amurallada con diseño colonial moderno. Ubicación privilegiada para explorar el centro histórico.',
-    location: 'Centro Histórico, Cartagena',
-    price: 380000,
-    rating: 4.9,
-    reviews: 203,
+    description: 'Suite por pareja con vista al mar. Persona adicional de 5 a 9 años: $50.000, de 10+ años: $100.000 adicionales por noche.',
+    location: 'Barú',
+    price: 450000,
+    priceText: '$450.000 COP/noche',
+    rating: 4.8,
+    reviews: 45,
     capacity: 2,
     bedrooms: 1,
     bathrooms: 1,
     checkIn: '3:00 PM',
-    checkOut: '12:00 PM',
+    checkOut: '11:00 AM',
     amenities: [
-      { name: 'WiFi', icon: Wifi, included: true },
-      { name: 'Aire acondicionado', icon: () => <span>❄️</span>, included: true },
-      { name: 'Desayuno incluido', icon: () => <span>🥐</span>, included: true },
-      { name: 'Recepción 24h', icon: () => <span>🕐</span>, included: true },
-      { name: 'Servicio a la habitación', icon: CheckCircle, included: true },
-      { name: 'Spa', icon: () => <span>💆</span>, included: false }
+      { name: 'Desayuno (tipo americano)', icon: () => <span>🥐</span>, included: true },
+      { name: 'Cóctel de bienvenida', icon: () => <span>🍹</span>, included: true },
+      { name: 'Servicio café', icon: Coffee, included: true },
+      { name: 'Sillas de playa', icon: () => <span>🏖️</span>, included: true },
+      { name: 'Agua dulce', icon: Droplet, included: true },
+      { name: 'WiFi 24 horas', icon: Wifi, included: true },
+      { name: 'Energía 24 horas', icon: () => <span>⚡</span>, included: true },
+      { name: 'Acceso a piscina', icon: () => <span>🏊</span>, included: true }
     ],
-    images: [
-      '/images/hospedaje/hotel-boutique/1.jpg',
-      '/images/hospedaje/hotel-boutique/2.jpg',
-      '/images/hospedaje/hotel-boutique/3.jpg',
-      '/images/hospedaje/hotel-boutique/4.jpg'
+    policies: [
+      'Check-in: 3:00 PM',
+      'Check-out: 11:00 AM',
+      'Cancelación: Gratis hasta 48 horas antes de la llegada',
+      'Mascotas: No permitidas',
+      'Fiestas: No permitidas',
+      'Nota: Si llega antes del horario establecido puede pedir en recepción guardar el equipaje hasta la entrega de la habitación. O puede reservar cama anticipadamente la cual tiene un costo de $50.000 por día para los huéspedes'
     ],
-    heroImage: '/images/hospedaje/hotel-boutique/hero.jpg',
-    emoji: '🏨'
+    extrasNotIncluded: [
+      'Bar (NOTA: Por el ingreso de bebidas o alimentos se cobra descorche)',
+      'Restaurante',
+      'Actividades acuáticas (Jet Sky, plancton luminoso, buceo, snorkeling)',
+      'Transporte terrestre y Marítimo',
+      'Seguro hotelero'
+    ],
+    images: Array.from({ length: 5 }, (_, i) => `/images/hospedaje/nena-beach-club/hotel-nena-suit-vista-al-mar/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/nena-beach-club/hotel-nena-suit-vista-al-mar.jpg',
+    emoji: '🏨',
+    category: 'nena-beach'
+  },
+  'nena-beach-piso1-frente-al-mar': {
+    slug: 'nena-beach-piso1-frente-al-mar',
+    name: 'Hotel Nena Beach - Habitación 1er Piso Frente Al Mar',
+    type: 'hotel',
+    description: 'Habitación 1er piso frente al mar por pareja. Persona adicional de 5 a 9 años: $50.000, de 10+ años: $100.000 adicionales por noche.',
+    location: 'Barú',
+    price: 350000,
+    priceText: '$350.000 COP/noche',
+    rating: 4.7,
+    reviews: 38,
+    capacity: 2,
+    bedrooms: 1,
+    bathrooms: 1,
+    checkIn: '3:00 PM',
+    checkOut: '11:00 AM',
+    amenities: [
+      { name: 'Desayuno (tipo americano)', icon: () => <span>🥐</span>, included: true },
+      { name: 'Cóctel de bienvenida', icon: () => <span>🍹</span>, included: true },
+      { name: 'Servicio café', icon: Coffee, included: true },
+      { name: 'Sillas de playa', icon: () => <span>🏖️</span>, included: true },
+      { name: 'Agua dulce', icon: Droplet, included: true },
+      { name: 'WiFi 24 horas', icon: Wifi, included: true },
+      { name: 'Energía 24 horas', icon: () => <span>⚡</span>, included: true },
+      { name: 'Acceso a piscina', icon: () => <span>🏊</span>, included: true }
+    ],
+    policies: [
+      'Check-in: 3:00 PM',
+      'Check-out: 11:00 AM',
+      'Cancelación: Gratis hasta 48 horas antes de la llegada',
+      'Nota: Guarda equipaje en recepción si llegas temprano o reserva cama anticipada por $50.000'
+    ],
+    extrasNotIncluded: ['Bar (descorche)', 'Restaurante', 'Actividades acuáticas', 'Transporte', 'Seguro hotelero'],
+    images: Array.from({ length: 6 }, (_, i) => `/images/hospedaje/nena-beach-club/hotel-nena-suit-frente-al-mar-piso1/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/nena-beach-club/hotel-nena-suit-frente-al-mar-piso1.jpg',
+    emoji: '🏨',
+    category: 'nena-beach'
+  },
+  'nena-beach-piso2-frente-al-mar': {
+    slug: 'nena-beach-piso2-frente-al-mar',
+    name: 'Hotel Nena Beach - Habitación 2do Piso Frente Al Mar',
+    type: 'hotel',
+    description: 'Habitación 2do piso frente al mar por pareja. Persona adicional de 5 a 9 años: $50.000, de 10+ años: $100.000 adicionales por noche.',
+    location: 'Barú',
+    price: 600000,
+    priceText: '$600.000 COP/noche',
+    rating: 4.9,
+    reviews: 52,
+    capacity: 2,
+    bedrooms: 1,
+    bathrooms: 1,
+    checkIn: '3:00 PM',
+    checkOut: '11:00 AM',
+    amenities: [
+      { name: 'Desayuno (tipo americano)', icon: () => <span>🥐</span>, included: true },
+      { name: 'Cóctel de bienvenida', icon: () => <span>🍹</span>, included: true },
+      { name: 'Servicio café', icon: Coffee, included: true },
+      { name: 'Sillas de playa', icon: () => <span>🏖️</span>, included: true },
+      { name: 'Agua dulce', icon: Droplet, included: true },
+      { name: 'WiFi 24 horas', icon: Wifi, included: true },
+      { name: 'Energía 24 horas', icon: () => <span>⚡</span>, included: true },
+      { name: 'Acceso a piscina', icon: () => <span>🏊</span>, included: true }
+    ],
+    policies: [
+      'Check-in: 3:00 PM',
+      'Check-out: 11:00 AM',
+      'Cancelación: Gratis hasta 48 horas antes de la llegada',
+      'Nota: Guarda equipaje en recepción si llegas temprano o reserva cama anticipada por $50.000'
+    ],
+    extrasNotIncluded: ['Bar (descorche)', 'Restaurante', 'Actividades acuáticas', 'Transporte', 'Seguro hotelero'],
+    images: Array.from({ length: 6 }, (_, i) => `/images/hospedaje/nena-beach-club/hotel-nena-suit-piso2/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/nena-beach-club/hotel-nena-suit-piso2.jpg',
+    emoji: '🏨',
+    category: 'nena-beach'
+  },
+  'nena-beach-luxury-vista-piscina-piso2': {
+    slug: 'nena-beach-luxury-vista-piscina-piso2',
+    name: 'Hotel Nena Beach - Luxury Vista A Piscina 2do Piso',
+    type: 'hotel',
+    description: 'Habitación Luxury vista a piscina 2do piso por pareja. Persona adicional de 5 a 9 años: $50.000, de 10+ años: $100.000 adicionales por noche.',
+    location: 'Barú',
+    price: 420000,
+    priceText: '$420.000 COP/noche',
+    rating: 4.8,
+    reviews: 41,
+    capacity: 2,
+    bedrooms: 1,
+    bathrooms: 1,
+    checkIn: '3:00 PM',
+    checkOut: '11:00 AM',
+    amenities: [
+      { name: 'Desayuno (tipo americano)', icon: () => <span>🥐</span>, included: true },
+      { name: 'Cóctel de bienvenida', icon: () => <span>🍹</span>, included: true },
+      { name: 'Servicio café', icon: Coffee, included: true },
+      { name: 'Sillas de playa', icon: () => <span>🏖️</span>, included: true },
+      { name: 'Agua dulce', icon: Droplet, included: true },
+      { name: 'WiFi 24 horas', icon: Wifi, included: true },
+      { name: 'Energía 24 horas', icon: () => <span>⚡</span>, included: true },
+      { name: 'Acceso a piscina', icon: () => <span>🏊</span>, included: true }
+    ],
+    policies: [
+      'Check-in: 3:00 PM',
+      'Check-out: 11:00 AM',
+      'Cancelación: Gratis hasta 48 horas antes de la llegada',
+      'Nota: Guarda equipaje en recepción si llegas temprano o reserva cama anticipada por $50.000'
+    ],
+    extrasNotIncluded: ['Bar (descorche)', 'Restaurante', 'Actividades acuáticas', 'Transporte', 'Seguro hotelero'],
+    images: Array.from({ length: 8 }, (_, i) => `/images/hospedaje/nena-beach-club/hotel-nena-suit-vista-piscina-piso2/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/nena-beach-club/hotel-nena-suit-vista-piscina-piso2.jpg',
+    emoji: '🏨',
+    category: 'nena-beach'
+  },
+  'nena-beach-piso1-frente-piscina': {
+    slug: 'nena-beach-piso1-frente-piscina',
+    name: 'Hotel Nena Beach - Habitación 1er Piso Frente A Piscina',
+    type: 'hotel',
+    description: 'Habitación 1er piso frente a piscina por pareja. Persona adicional de 5 a 9 años: $50.000, de 10+ años: $100.000 adicionales por noche.',
+    location: 'Barú',
+    price: 300000,
+    priceText: '$300.000 COP/noche',
+    rating: 4.6,
+    reviews: 34,
+    capacity: 2,
+    bedrooms: 1,
+    bathrooms: 1,
+    checkIn: '3:00 PM',
+    checkOut: '11:00 AM',
+    amenities: [
+      { name: 'Desayuno (tipo americano)', icon: () => <span>🥐</span>, included: true },
+      { name: 'Cóctel de bienvenida', icon: () => <span>🍹</span>, included: true },
+      { name: 'Servicio café', icon: Coffee, included: true },
+      { name: 'Sillas de playa', icon: () => <span>🏖️</span>, included: true },
+      { name: 'Agua dulce', icon: Droplet, included: true },
+      { name: 'WiFi 24 horas', icon: Wifi, included: true },
+      { name: 'Energía 24 horas', icon: () => <span>⚡</span>, included: true },
+      { name: 'Acceso a piscina', icon: () => <span>🏊</span>, included: true }
+    ],
+    policies: [
+      'Check-in: 3:00 PM',
+      'Check-out: 11:00 AM',
+      'Cancelación: Gratis hasta 48 horas antes de la llegada',
+      'Nota: Guarda equipaje en recepción si llegas temprano o reserva cama anticipada por $50.000'
+    ],
+    extrasNotIncluded: ['Bar (descorche)', 'Restaurante', 'Actividades acuáticas', 'Transporte', 'Seguro hotelero'],
+    images: Array.from({ length: 3 }, (_, i) => `/images/hospedaje/nena-beach-club/hotel-nena-suit-vista-piscina-piso1/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/nena-beach-club/hotel-nena-suit-vista-piscina-piso1.jpg',
+    emoji: '🏨',
+    category: 'nena-beach'
+  },
+  'nena-beach-glamping-vista-al-mar': {
+    slug: 'nena-beach-glamping-vista-al-mar',
+    name: 'Hotel Nena Beach - Glamping Vista Al Mar',
+    type: 'glamping',
+    description: 'Glamping con vista al mar por pareja. Persona adicional de 5 a 9 años: $50.000, de 10+ años: $100.000 adicionales por noche.',
+    location: 'Barú',
+    price: 415000,
+    priceText: '$415.000 COP/noche',
+    rating: 4.9,
+    reviews: 28,
+    capacity: 2,
+    bedrooms: 1,
+    bathrooms: 1,
+    checkIn: '3:00 PM',
+    checkOut: '11:00 AM',
+    amenities: [
+      { name: 'Desayuno (tipo americano)', icon: () => <span>🥐</span>, included: true },
+      { name: 'Cóctel de bienvenida', icon: () => <span>🍹</span>, included: true },
+      { name: 'Servicio café', icon: Coffee, included: true },
+      { name: 'Sillas de playa', icon: () => <span>🏖️</span>, included: true },
+      { name: 'Agua dulce', icon: Droplet, included: true },
+      { name: 'WiFi 24 horas', icon: Wifi, included: true },
+      { name: 'Energía 24 horas', icon: () => <span>⚡</span>, included: true },
+      { name: 'Acceso a piscina', icon: () => <span>🏊</span>, included: true }
+    ],
+    policies: [
+      'Check-in: 3:00 PM',
+      'Check-out: 11:00 AM',
+      'Cancelación: Gratis hasta 48 horas antes de la llegada',
+      'Nota: Guarda equipaje en recepción si llegas temprano o reserva cama anticipada por $50.000'
+    ],
+    extrasNotIncluded: ['Bar (descorche)', 'Restaurante', 'Actividades acuáticas', 'Transporte', 'Seguro hotelero'],
+    images: Array.from({ length: 5 }, (_, i) => `/images/hospedaje/nena-beach-club/glamping-vista-al-mar/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/nena-beach-club/glamping-vista-al-mar.jpg',
+    emoji: '⛺',
+    category: 'nena-beach'
+  },
+  'nena-beach-instalaciones': {
+    slug: 'nena-beach-instalaciones',
+    name: 'Hotel Nena Beach - Instalaciones Nena Beach Club',
+    type: 'hotel',
+    description: 'Acceso a instalaciones de Nena Beach Club. Persona adicional de 5 a 9 años: $50.000, de 10+ años: $100.000 adicionales.',
+    location: 'Barú',
+    price: 280000,
+    priceText: '$280.000 COP/noche',
+    rating: 4.7,
+    reviews: 56,
+    capacity: 2,
+    bedrooms: 1,
+    bathrooms: 1,
+    checkIn: '3:00 PM',
+    checkOut: '11:00 AM',
+    amenities: [
+      { name: 'Desayuno (tipo americano)', icon: () => <span>🥐</span>, included: true },
+      { name: 'Cóctel de bienvenida', icon: () => <span>🍹</span>, included: true },
+      { name: 'Servicio café', icon: Coffee, included: true },
+      { name: 'Sillas de playa', icon: () => <span>🏖️</span>, included: true },
+      { name: 'Agua dulce', icon: Droplet, included: true },
+      { name: 'WiFi 24 horas', icon: Wifi, included: true },
+      { name: 'Energía 24 horas', icon: () => <span>⚡</span>, included: true },
+      { name: 'Acceso a piscina', icon: () => <span>🏊</span>, included: true }
+    ],
+    policies: [
+      'Check-in: 3:00 PM',
+      'Check-out: 11:00 AM',
+      'Cancelación: Gratis hasta 48 horas antes de la llegada',
+      'Nota: Guarda equipaje en recepción si llegas temprano o reserva cama anticipada por $50.000'
+    ],
+    extrasNotIncluded: ['Bar (descorche)', 'Restaurante', 'Actividades acuáticas', 'Transporte', 'Seguro hotelero'],
+    images: Array.from({ length: 10 }, (_, i) => `/images/hospedaje/nena-beach-club/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/nena-beach-club/nena-beach-club.jpg',
+    emoji: '🏖️',
+    category: 'nena-beach'
+  },
+  'nena-beach-pasadia': {
+    slug: 'nena-beach-pasadia',
+    name: 'Hotel Nena Beach - Pasadía Nena Beach Club',
+    type: 'pasadia',
+    description: 'Pasadía con transporte terrestre ida y regreso (salida 7am, regreso 3pm o salida 9:30am, regreso 5:30pm). Incluye cóctel de bienvenida, cama de playa, almuerzo, café, duchas, vestieres, locker y piscina.',
+    location: 'Barú',
+    price: 320000,
+    priceText: '$320.000 COP/persona',
+    rating: 4.8,
+    reviews: 89,
+    capacity: 1,
+    bedrooms: 0,
+    bathrooms: 1,
+    checkIn: '7:00 AM',
+    checkOut: '5:30 PM',
+    amenities: [
+      { name: 'Desayuno (tipo americano)', icon: () => <span>🥐</span>, included: true },
+      { name: 'Cóctel de bienvenida', icon: () => <span>🍹</span>, included: true },
+      { name: 'Servicio café', icon: Coffee, included: true },
+      { name: 'Sillas de playa', icon: () => <span>🏖️</span>, included: true },
+      { name: 'Agua dulce', icon: Droplet, included: true },
+      { name: 'WiFi 24 horas', icon: Wifi, included: true },
+      { name: 'Energía 24 horas', icon: () => <span>⚡</span>, included: true },
+      { name: 'Acceso a piscina', icon: () => <span>🏊</span>, included: true },
+      { name: 'Duchas', icon: () => <span>🚿</span>, included: true },
+      { name: 'Vestieres', icon: () => <span>👕</span>, included: true },
+      { name: 'Locker', icon: () => <span>🔐</span>, included: true }
+    ],
+    policies: [
+      'Horarios: 7am-3pm o 9:30am-5:30pm',
+      'Niños 0-4 años no pagan pasadía (solo consumos)',
+      'No incluye tours a Islas del Rosario'
+    ],
+    extrasNotIncluded: ['Actividades acuáticas: buceo, snorkeling, plancton luminoso, Jet Sky'],
+    images: Array.from({ length: 10 }, (_, i) => `/images/hospedaje/nena-beach-club/nena-beach-club-pasadia/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/nena-beach-club/nena-beach-club-pasadia.jpg',
+    emoji: '☀️',
+    category: 'nena-beach'
+  },
+  // ==================== HOTEL ETEKA - BARÚ ====================
+  'eteka-habitacion-estandar': {
+    slug: 'eteka-habitacion-estandar',
+    name: 'Hotel Eteka - Habitación Estándar',
+    type: 'hotel',
+    description: 'Habitación estándar en Eteka Beach Club, Barú.',
+    location: 'Barú',
+    price: 640000,
+    priceText: '$640.000 COP/noche + 19% IVA',
+    rating: 4.7,
+    reviews: 34,
+    capacity: 2,
+    bedrooms: 1,
+    bathrooms: 1,
+    checkIn: '3:00 PM',
+    checkOut: '11:00 AM',
+    amenities: [],
+    policies: ['Tarifa no incluye 19% de IVA', 'Horarios: 9:30am - 5:30pm'],
+    extrasNotIncluded: [],
+    images: Array.from({ length: 10 }, (_, i) => `/images/hospedaje/eteka/eteka-estandar/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/eteka/eteka-estandar.jpg',
+    emoji: '🏨',
+    category: 'eteka'
+  },
+  'eteka-suit-vista-al-mar': {
+    slug: 'eteka-suit-vista-al-mar',
+    name: 'Hotel Eteka - Suite Vista Al Mar',
+    type: 'hotel',
+    description: 'Suite con vista al mar en Eteka Beach Club, Barú.',
+    location: 'Barú',
+    price: 1070000,
+    priceText: '$1.070.000 COP/noche + 19% IVA',
+    rating: 4.9,
+    reviews: 28,
+    capacity: 2,
+    bedrooms: 1,
+    bathrooms: 1,
+    checkIn: '3:00 PM',
+    checkOut: '11:00 AM',
+    amenities: [],
+    policies: ['Tarifa no incluye 19% de IVA', 'Horarios: 9:30am - 5:30pm'],
+    extrasNotIncluded: [],
+    images: Array.from({ length: 5 }, (_, i) => `/images/hospedaje/eteka/eteka-suit-vista-al-mar/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/eteka/eteka-suit-vista-al-mar.jpg',
+    emoji: '🏨',
+    category: 'eteka'
+  },
+  'eteka-junior-suite': {
+    slug: 'eteka-junior-suite',
+    name: 'Hotel Eteka - Junior Suite',
+    type: 'hotel',
+    description: 'Junior Suite en Eteka Beach Club, Barú.',
+    location: 'Barú',
+    price: 785000,
+    priceText: '$785.000 COP/noche + 19% IVA',
+    rating: 4.8,
+    reviews: 31,
+    capacity: 2,
+    bedrooms: 1,
+    bathrooms: 1,
+    checkIn: '3:00 PM',
+    checkOut: '11:00 AM',
+    amenities: [],
+    policies: ['Tarifa no incluye 19% de IVA', 'Horarios: 9:30am - 5:30pm'],
+    extrasNotIncluded: [],
+    images: Array.from({ length: 5 }, (_, i) => `/images/hospedaje/eteka/eteka-junior-suit/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/eteka/eteka-junior-suit.jpg',
+    emoji: '🏨',
+    category: 'eteka'
+  },
+  'eteka-suit-vista-mar-cielo': {
+    slug: 'eteka-suit-vista-mar-cielo',
+    name: 'Hotel Eteka - Suite Vista Al Mar Cielo',
+    type: 'hotel',
+    description: 'Suite vista al mar cielo en Eteka Beach Club, Barú.',
+    location: 'Barú',
+    price: 1400000,
+    priceText: '$1.400.000 COP/noche + 19% IVA',
+    rating: 5.0,
+    reviews: 19,
+    capacity: 2,
+    bedrooms: 1,
+    bathrooms: 1,
+    checkIn: '3:00 PM',
+    checkOut: '11:00 AM',
+    amenities: [],
+    policies: ['Tarifa no incluye 19% de IVA', 'Horarios: 9:30am - 5:30pm'],
+    extrasNotIncluded: [],
+    images: Array.from({ length: 7 }, (_, i) => `/images/hospedaje/eteka/eteka-suit-vista-mar-cielo/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/eteka/eteka-suit-vista-mar-cielo.jpg',
+    emoji: '🏨',
+    category: 'eteka'
+  },
+  'eteka-suit-vista-mar-evolucion': {
+    slug: 'eteka-suit-vista-mar-evolucion',
+    name: 'Hotel Eteka - Suite Vista Al Mar Evolución',
+    type: 'hotel',
+    description: 'Suite vista al mar evolución en Eteka Beach Club, Barú.',
+    location: 'Barú',
+    price: 1100000,
+    priceText: '$1.100.000 COP/noche + 19% IVA',
+    rating: 4.9,
+    reviews: 22,
+    capacity: 2,
+    bedrooms: 1,
+    bathrooms: 1,
+    checkIn: '3:00 PM',
+    checkOut: '11:00 AM',
+    amenities: [],
+    policies: ['Tarifa no incluye 19% de IVA', 'Horarios: 9:30am - 5:30pm'],
+    extrasNotIncluded: [],
+    images: Array.from({ length: 7 }, (_, i) => `/images/hospedaje/eteka/eteka-vista-mar-evolucion/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/eteka/eteka-vista-mar-evolucion.jpg',
+    emoji: '🏨',
+    category: 'eteka'
+  },
+  'eteka-pasadia': {
+    slug: 'eteka-pasadia',
+    name: 'Hotel Eteka - Pasadía Eteka Beach Club',
+    type: 'pasadia',
+    description: 'Pasadía con transporte en lancha ida y regreso, bebida de bienvenida, experiencia gastronómica de 3 tiempos, uso de playa semi-privada, toallas y más.',
+    location: 'Barú',
+    price: 320000,
+    priceText: '$320.000 COP/persona + 19% IVA',
+    rating: 4.8,
+    reviews: 67,
+    capacity: 1,
+    bedrooms: 0,
+    bathrooms: 1,
+    checkIn: '10:00 AM',
+    checkOut: '5:00 PM',
+    amenities: [
+      { name: 'Transporte en lancha Ida y Regreso', icon: () => <span>🚤</span>, included: true },
+      { name: 'Bebida de Bienvenida', icon: () => <span>🍹</span>, included: true },
+      { name: 'Experiencia Gastronómica de 3 tiempos', icon: () => <span>🍽️</span>, included: true },
+      { name: 'Uso de la playa semi-privada', icon: () => <span>🏖️</span>, included: true },
+      { name: '1 toalla por persona por el día', icon: () => <span>🛁</span>, included: true }
+    ],
+    policies: [
+      'Horarios de transporte: 10:00, 10:30, 11:00, 11:30 am (ida) | 4:00 pm ó 5:00 pm (regreso)',
+      'La lancha sale de la playa de Bocagrande (detrás del Hospital Bocagrande)',
+      'Tarifa no incluye 19% de IVA',
+      'PROHIBIDO FUMAR',
+      'SOLO NIÑOS MAYORES DE 12 AÑOS'
+    ],
+    extrasNotIncluded: ['Bebidas no incluidas'],
+    images: Array.from({ length: 10 }, (_, i) => `/images/hospedaje/eteka/eteka-pasadia/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/eteka/eteka-pasadia.jpg',
+    emoji: '☀️',
+    category: 'eteka'
+  },
+
+    // ==================== ISLA DEL SOL - ISLAS DEL ROSARIO ====================
+  'isla-del-sol-day-tour': {
+    slug: 'isla-del-sol-day-tour',
+    name: 'Isla Del Sol – Day Tour',
+    type: 'pasadia',
+    description: 'Pasadía en Isla del Sol, Islas del Rosario. Adulto: $420.000 | Adulto Open Bar: $420.000 | Adulto Open Bar VIP: $560.000 | Niño 4-10 años: $360.000 | Niño 2-3 años: $320.000',
+    location: 'Islas del Rosario',
+    price: 420000,
+    priceText: 'Desde $420.000 COP/persona',
+    rating: 4.9,
+    reviews: 156,
+    capacity: 1,
+    bedrooms: 0,
+    bathrooms: 1,
+    checkIn: '7:45 AM',
+    checkOut: '5:00 PM',
+    amenities: [
+      { name: 'Transporte Cartagena – Isla del Sol – Cartagena', icon: () => <span>🚤</span>, included: true },
+      { name: 'Frutas tropicales de Bienvenida', icon: () => <span>🍉</span>, included: true },
+      { name: 'Almuerzo típico (pescado frito, arroz con coco, yuca, patacón, ensalada)', icon: () => <span>🍛</span>, included: true },
+      { name: 'Postre típico', icon: () => <span>🍰</span>, included: true },
+      { name: 'Sillas asoleadoras', icon: () => <span>☀️</span>, included: true },
+      { name: 'Piscina (con agua de mar)', icon: () => <span>🏊</span>, included: true },
+      { name: 'Recorrido panorámico por el Parque Nacional Natural', icon: () => <span>🌿</span>, included: true }
+    ],
+    policies: [
+      'IDA: Presentarse en Muelle La Bodeguita puerta #4 (diagonal Torre del Reloj) entre 7:45 am',
+      'SALIDA: 8:15 - 8:30 am aprox.',
+      'REGRESO: 2:45 - 3:00 pm aprox. | LLEGADA Cartagena: 4:30 - 5:00 pm',
+      'No se permite ingreso de alimentos/bebidas al Hotel',
+      'No se permiten mascotas',
+      'Volumen prudente de parlantes',
+      'No se permiten cavas/neveras con bebidas',
+      'Reserva: 50% de anticipo mínimo',
+      'Cancelación sin penalidad: 24hrs de anticipación',
+      'No-show: penalidad 100% del valor'
+    ],
+    extrasNotIncluded: [
+      'Gastos no especificados',
+      'Tasa Portuaria: $29.000 por persona (solo efectivo, sujeto a cambio)',
+      'Servicio de toallas',
+      'Actividades adicionales: Buceo, Snorkel, Masajes, entrada al oceanario, Caminatas Ecológicas'
+    ],
+    images: Array.from({ length: 9 }, (_, i) => `/images/hospedaje/hotel_isla_del_sol/day-tour/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/hotel_isla_del_sol/day-tour.jpg',
+    emoji: '🏝️',
+    category: 'isla-del-sol'
+  },
+  'isla-del-sol-bungalo-clasico-abanico': {
+    slug: 'isla-del-sol-bungalo-clasico-abanico',
+    name: 'Isla Del Sol – Bungaló Clásico Abanico',
+    type: 'bungalow',
+    description: 'Bungaló clásico con abanico. Valor sencilla o doble: $750.000 | Persona adicional: $320.000 | Niños 4-10 años: $195.000 | Niños 0-3 años: $105.000 | Capacidad máxima: 5 personas',
+    location: 'Islas del Rosario',
+    price: 750000,
+    priceText: '$750.000 COP/noche (sin IVA)',
+    rating: 4.8,
+    reviews: 43,
+    capacity: 5,
+    bedrooms: 1,
+    bathrooms: 1,
+    checkIn: '3:00 PM',
+    checkOut: '11:00 AM',
+    amenities: [
+      { name: 'Alimentación completa con bebidas no alcohólicas', icon: () => <span>🍴</span>, included: true },
+      { name: 'Cóctel de bienvenida', icon: () => <span>🍹</span>, included: true },
+      { name: 'Playa y Piscina con agua del mar', icon: () => <span>🏖️</span>, included: true },
+      { name: 'Sillas asoleadoras', icon: () => <span>☀️</span>, included: true },
+      { name: 'Recorrido panorámico por el Parque Nacional', icon: () => <span>🌿</span>, included: true },
+      { name: 'Postre típico (Cocadas)', icon: () => <span>🥥</span>, included: true },
+      { name: 'Servicio de toallas', icon: () => <span>🛁</span>, included: true },
+      { name: 'Café Colombiano', icon: Coffee, included: true }
+    ],
+    policies: [
+      'Tarifa sin IVA (sumar 19% para colombianos)',
+      'Alimentación: Primer día (almuerzo típico + cena a la carta) | Día de salida (desayuno + almuerzo a la carta)',
+      'Estadías +1 noche: 3 comidas incluidas'
+    ],
+    extrasNotIncluded: [
+      'Gastos no especificados',
+      'Tasa Portuaria: $29.000 por persona (solo efectivo)',
+      'Transporte Cartagena-Islas del Sol-Cartagena: $140.000 p/p (compartido con tour del día)',
+      'Uso de muelles y parque nacional: $23.000 p/p (solo efectivo)',
+      'Transporte adulto/niño 4+ años ida y vuelta: $160.000'
+    ],
+    images: Array.from({ length: 9 }, (_, i) => `/images/hospedaje/hotel_isla_del_sol/bungalo-clasico-abanico/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/hotel_isla_del_sol/bungalo-clasico-abanico.jpg',
+    emoji: '🏡',
+    category: 'isla-del-sol'
+  },
+  'isla-del-sol-bungalo-estandar-vista-jardin': {
+    slug: 'isla-del-sol-bungalo-estandar-vista-jardin',
+    name: 'Isla Del Sol – Bungaló Estándar Vista Al Jardín',
+    type: 'bungalow',
+    description: 'Bungaló estándar con vista al jardín. Persona adicional: $380.000 | Niños 4-10 años: $280.000 | Niños 0-3 años: $104.000',
+    location: 'Islas del Rosario',
+    price: 877000,
+    priceText: '$877.000 COP/noche (sin IVA)',
+    rating: 4.9,
+    reviews: 38,
+    capacity: 3,
+    bedrooms: 1,
+    bathrooms: 1,
+    checkIn: '3:00 PM',
+    checkOut: '11:00 AM',
+    amenities: [
+      { name: 'Bungalow Estándar', icon: () => <span>🏡</span>, included: true },
+      { name: 'Un baño privado', icon: () => <span>🚽</span>, included: true },
+      { name: 'Televisión satelital', icon: () => <span>📺</span>, included: true },
+      { name: 'Nevera', icon: () => <span>🧊</span>, included: true },
+      { name: 'Luz Eléctrica y Energía Solar', icon: () => <span>⚡</span>, included: true },
+      { name: 'Aire Acondicionado', icon: () => <span>❄️</span>, included: true },
+      { name: 'Terraza con Hamaca', icon: () => <span>🌅</span>, included: true },
+      { name: 'Cama doble y sencilla', icon: () => <span>🛏️</span>, included: true }
+    ],
+    policies: [
+      'Alimentación completa con bebidas no alcohólicas',
+      'Primer día: Almuerzo típico + Cena a la Carta | Día de salida: Desayuno + Almuerzo a la Carta',
+      'Estadías +1 noche: 3 comidas incluidas',
+      'Cóctel de bienvenida, playa, piscina, sillas, recorrido parque natural, postre, toallas, café'
+    ],
+    extrasNotIncluded: [
+      'Gastos no especificados',
+      'Tasa Portuaria: $29.000 por persona (solo efectivo)',
+      'Tarifa sin IVA (sumar 19% para colombianos)',
+      'Transporte Cartagena-Islas del Sol-Cartagena: compartido con tour del día',
+      'Uso de muelles y parque nacional: $23.000 p/p (solo efectivo)',
+      'Transporte adulto/niño 4+ años ida y vuelta: $160.000'
+    ],
+    images: Array.from({ length: 9 }, (_, i) => `/images/hospedaje/hotel_isla_del_sol/bungalo_estandar_vista_al_jardin/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/hotel_isla_del_sol/bungalo_estandar_vista_al_jardin.jpg',
+    emoji: '🏡',
+    category: 'isla-del-sol'
+  },
+
+  // ==================== HOTEL AURA BARÚ ====================
+  'aura-baru-experiencia-deluxe': {
+    slug: 'aura-baru-experiencia-deluxe',
+    name: 'Hotel Aura Barú – Experiencia Deluxe',
+    type: 'hotel',
+    description: 'Aura Hotel Barú - DELUXE EXPERIENCE con transporte terrestre incluido. Persona adicional: $380.000 | Niños 4-10 años: $280.000 | Niños 0-3 años: $104.000',
+    location: 'Barú',
+    price: 385000,
+    priceText: '$385.000 COP/persona (sin IVA)',
+    rating: 4.8,
+    reviews: 52,
+    capacity: 2,
+    bedrooms: 1,
+    bathrooms: 1,
+    checkIn: '3:00 PM',
+    checkOut: '11:00 AM',
+    amenities: [
+      { name: 'Recogida en hotel', icon: () => <span>🚗</span>, included: true },
+      { name: 'Transporte en carro (1h aprox.)', icon: () => <span>🚗</span>, included: true },
+      { name: 'Coctel de Bienvenida', icon: () => <span>🍹</span>, included: true },
+      { name: 'Bono Consumible ($90.000 adultos / $50.000 niños)', icon: () => <span>🎫</span>, included: true },
+      { name: 'Asoleadoras', icon: () => <span>☀️</span>, included: true },
+      { name: 'Camas de playa', icon: () => <span>🏖️</span>, included: true },
+      { name: 'Toallas y duchas de agua dulce', icon: () => <span>🚿</span>, included: true },
+      { name: 'Kayaks', icon: () => <span>🛶</span>, included: true },
+      { name: 'Paddle board', icon: () => <span>🏄</span>, included: true },
+      { name: 'Mesa de Ping Pong', icon: () => <span>🏓</span>, included: true }
+    ],
+    policies: [
+      'Recogida en hoteles del Centro, Manga, Bocagrande, Castillo Grande, Laguito, Crespo',
+      'Transporte en carro: 1h aprox.',
+      'Tarifa sin IVA (sumar 19% para colombianos)'
+    ],
+    extrasNotIncluded: [
+      'Gastos no especificados',
+      'Tasa Portuaria: $29.000 por persona (solo efectivo)',
+      'Consumos y actividades no especificadas'
+    ],
+    images: Array.from({ length: 3 }, (_, i) => `/images/hospedaje/aura-experiencia-deluxe/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/aura-experiencia-deluxe1.jpg',
+    emoji: '🏨',
+    category: 'aura-baru'
+  },
+
+  // ==================== FINCA VERANERAS - TURBACO ====================
+  'finca-veraneras': {
+    slug: 'finca-veraneras',
+    name: 'Finca Veraneras',
+    type: 'finca',
+    description: 'Finca en Turbaco. Pasadía (9:00 am - 4:30 pm): $950.000 | Pasanoche (6:00 pm - 8:00 am): $1.500.000 | 24 horas: $1.700.000',
+    location: 'Turbaco',
+    price: 950000,
+    priceText: 'Desde $950.000 COP',
+    rating: 4.7,
+    reviews: 28,
+    capacity: 20,
+    bedrooms: 4,
+    bathrooms: 3,
+    checkIn: '9:00 AM',
+    checkOut: '4:30 PM',
+    amenities: [
+      { name: 'Piscina', icon: () => <span>🏊</span>, included: true },
+      { name: 'Zona BBQ', icon: () => <span>🔥</span>, included: true },
+      { name: 'Parqueadero', icon: () => <span>🅿️</span>, included: true },
+      { name: 'Zona verde', icon: () => <span>🌳</span>, included: true }
+    ],
+    policies: ['Reserva con anticipo requerida', 'Consultar disponibilidad'],
+    extrasNotIncluded: ['Alimentación', 'Transporte', 'Actividades adicionales'],
+    images: Array.from({ length: 3 }, (_, i) => `/images/hospedaje/finca-veraneras/${i + 1}.jpg`),
+    heroImage: '/images/hospedaje/finca-veraneras.jpg',
+    emoji: '🏡',
+    category: 'finca'
   }
 };
 
-export default function AccommodationDetail() {
+// ✅ Componente interno que usa useSearchParams
+function AccommodationDetailContent() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const slug = params?.slug as string;
   const accommodation = accommodationsData[slug];
 
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [checkInDate, setCheckInDate] = useState('');
-  const [checkOutDate, setCheckOutDate] = useState('');
+  const [checkInDate, setCheckInDate] = useState(() => searchParams.get('checkin') || '');
+  const [checkOutDate, setCheckOutDate] = useState(() => searchParams.get('checkout') || '');
   const [guests, setGuests] = useState('2');
 
   if (!accommodation) {
@@ -172,7 +714,6 @@ export default function AccommodationDetail() {
 
   const handleReservation = (e: React.FormEvent) => {
     e.preventDefault();
-    
     const phoneNumber = '573001234567';
     const nights = checkInDate && checkOutDate 
       ? Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24))
@@ -189,7 +730,7 @@ export default function AccommodationDetail() {
 📅 *Check-out:* ${checkOutDate || 'Por definir'}
 🌙 *Noches:* ${nights}
 👥 *Huéspedes:* ${guests}
-💰 *Precio por noche:* $${accommodation.price.toLocaleString()} COP
+💰 *Precio por noche:* ${accommodation.priceText}
 💵 *Total estimado:* $${total.toLocaleString()} COP
 ━━━━━━━━━━━━━━━━━━━━
 
@@ -204,13 +745,10 @@ export default function AccommodationDetail() {
     setLightboxOpen(true);
   };
 
-  const photos = accommodation.images.map((img: string) => ({
-    src: img,
-    alt: `${accommodation.name} - Galería`
-  }));
+  const photos = accommodation.images.map((img: string) => ({ src: img, alt: `${accommodation.name} - Galería` }));
 
   const relatedAccommodations = Object.values(accommodationsData)
-    .filter((a: any) => a.slug !== accommodation.slug && a.type === accommodation.type)
+    .filter((a: any) => a.slug !== accommodation.slug && a.category === accommodation.category)
     .slice(0, 3);
 
   return (
@@ -242,13 +780,8 @@ export default function AccommodationDetail() {
           <div className="text-center text-white px-4">
             <h1 className="text-4xl md:text-5xl font-bold mb-2">{accommodation.name}</h1>
             <div className="flex items-center justify-center space-x-4 text-sm">
-              <span className="flex items-center gap-1">
-                <MapPin className="w-4 h-4" /> {accommodation.location}
-              </span>
-              <span className="flex items-center gap-1">
-                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                {accommodation.rating} ({accommodation.reviews} reseñas)
-              </span>
+              <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> {accommodation.location}</span>
+              <span className="flex items-center gap-1"><Star className="w-4 h-4 fill-yellow-400 text-yellow-400" /> {accommodation.rating} ({accommodation.reviews} reseñas)</span>
             </div>
           </div>
         </div>
@@ -257,10 +790,8 @@ export default function AccommodationDetail() {
       {/* Contenido Principal */}
       <section className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
           {/* Columna Izquierda - Información */}
           <div className="lg:col-span-2 space-y-8">
-            
             {/* Descripción */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-2xl font-bold text-yamid-palm mb-4">Descripción</h2>
@@ -273,18 +804,18 @@ export default function AccommodationDetail() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center p-4 bg-yamid-sand rounded-lg">
                   <Users className="w-6 h-6 text-yamid-gold mx-auto mb-2" />
-                  <span className="text-sm font-medium">{accommodation.capacity} huéspedes</span>
+                  <span className="text-sm font-medium">{accommodation.capacity} {accommodation.capacity === 1 ? 'huésped' : 'huéspedes'}</span>
                 </div>
                 <div className="text-center p-4 bg-yamid-sand rounded-lg">
                   <Bed className="w-6 h-6 text-yamid-gold mx-auto mb-2" />
-                  <span className="text-sm font-medium">{accommodation.bedrooms} habitaciones</span>
+                  <span className="text-sm font-medium">{accommodation.bedrooms} {accommodation.bedrooms === 1 ? 'habitación' : 'habitaciones'}</span>
                 </div>
                 <div className="text-center p-4 bg-yamid-sand rounded-lg">
                   <span className="text-2xl mb-2 block">🚿</span>
-                  <span className="text-sm font-medium">{accommodation.bathrooms} baños</span>
+                  <span className="text-sm font-medium">{accommodation.bathrooms} {accommodation.bathrooms === 1 ? 'baño' : 'baños'}</span>
                 </div>
                 <div className="text-center p-4 bg-yamid-sand rounded-lg">
-                  <span className="text-2xl mb-2 block">⭐</span>
+                  <Star className="w-6 h-6 text-yamid-gold mx-auto mb-2" />
                   <span className="text-sm font-medium">{accommodation.rating} rating</span>
                 </div>
               </div>
@@ -295,27 +826,14 @@ export default function AccommodationDetail() {
               <h2 className="text-2xl font-bold text-yamid-palm mb-4">Galería</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {accommodation.images.map((img: string, index: number) => (
-                  <div 
-                    key={index} 
-                    className="aspect-square rounded-lg overflow-hidden relative group cursor-pointer"
-                    onClick={() => openLightbox(index)}
-                  >
-                    <Image 
-                      src={img} 
-                      alt={`${accommodation.name} - Vista ${index + 1}`}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-300"
-                      sizes="(max-width: 768px) 50vw, 25vw"
+                  <div key={index} className="aspect-square rounded-lg overflow-hidden relative group cursor-pointer" onClick={() => openLightbox(index)}>
+                    <Image src={img} alt={`${accommodation.name} - Vista ${index + 1}`} fill className="object-cover group-hover:scale-110 transition-transform duration-300" sizes="(max-width: 768px) 50vw, 25vw"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
                         const parent = target.parentElement;
                         if (parent) {
-                          parent.innerHTML = `
-                            <div class="absolute inset-0 flex items-center justify-center bg-yamid-sand">
-                              <span class="text-4xl text-yamid-gold-dark">📷</span>
-                            </div>
-                          `;
+                          parent.innerHTML = `<div class="absolute inset-0 flex items-center justify-center bg-yamid-sand"><span class="text-4xl text-yamid-gold-dark">📷</span></div>`;
                         }
                       }}
                     />
@@ -332,16 +850,10 @@ export default function AccommodationDetail() {
                   const Icon = amenity.icon;
                   return (
                     <div key={index} className={`flex items-center gap-3 p-3 rounded-lg ${amenity.included ? 'bg-green-50' : 'bg-gray-50'}`}>
-                      {amenity.included ? (
-                        <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                      ) : (
-                        <XCircle className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                      )}
+                      {amenity.included ? <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" /> : <XCircle className="w-5 h-5 text-gray-400 flex-shrink-0" />}
                       <div className="flex items-center gap-2">
                         {Icon && <Icon className="w-4 h-4 text-yamid-gold" />}
-                        <span className={amenity.included ? 'text-gray-700' : 'text-gray-400'}>
-                          {amenity.name}
-                        </span>
+                        <span className={amenity.included ? 'text-gray-700' : 'text-gray-400'}>{amenity.name}</span>
                       </div>
                     </div>
                   );
@@ -355,105 +867,78 @@ export default function AccommodationDetail() {
               <div className="space-y-3 text-gray-700">
                 <p><strong>Check-in:</strong> {accommodation.checkIn}</p>
                 <p><strong>Check-out:</strong> {accommodation.checkOut}</p>
-                <p><strong>Cancelación:</strong> Gratis hasta 48 horas antes de la llegada</p>
-                <p><strong>Mascotas:</strong> No permitidas</p>
-                <p><strong>Fiestas:</strong> No permitidas</p>
+                {accommodation.policies.map((policy: string, index: number) => (
+                  <p key={index}>• {policy}</p>
+                ))}
               </div>
             </div>
 
+            {/* Servicios No Incluidos */}
+            {accommodation.extrasNotIncluded?.length > 0 && (
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-2xl font-bold text-yamid-palm mb-4">Servicios No Incluidos</h2>
+                <ul className="space-y-2 text-gray-600">
+                  {accommodation.extrasNotIncluded.map((extra: string, index: number) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <XCircle className="w-4 h-4 text-red-500 mt-1 flex-shrink-0" />
+                      {extra}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
           {/* Columna Derecha - Formulario */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
               <div className="mb-6">
-                <p className="text-gray-500 text-sm">Precio por noche</p>
-                <p className="text-3xl font-bold text-yamid-palm">${accommodation.price.toLocaleString()} COP</p>
+                <p className="text-gray-500 text-sm">Precio desde</p>
+                <p className="text-3xl font-bold text-yamid-palm">{accommodation.priceText}</p>
               </div>
-
               <form onSubmit={handleReservation} className="space-y-4">
                 <div>
                   <label className="block text-gray-700 font-medium mb-2">Check-in</label>
-                  <input 
-                    type="date" 
-                    value={checkInDate}
-                    onChange={(e) => setCheckInDate(e.target.value)}
-                    min={new Date().toISOString().split('T')[0]}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold"
-                  />
+                  <input type="date" value={checkInDate} onChange={(e) => setCheckInDate(e.target.value)} min={new Date().toISOString().split('T')[0]} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold" />
                 </div>
                 <div>
                   <label className="block text-gray-700 font-medium mb-2">Check-out</label>
-                  <input 
-                    type="date" 
-                    value={checkOutDate}
-                    onChange={(e) => setCheckOutDate(e.target.value)}
-                    min={checkInDate || new Date().toISOString().split('T')[0]}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold"
-                  />
+                  <input type="date" value={checkOutDate} onChange={(e) => setCheckOutDate(e.target.value)} min={checkInDate || new Date().toISOString().split('T')[0]} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold" />
                 </div>
                 <div>
                   <label className="block text-gray-700 font-medium mb-2">Huéspedes</label>
-                  <select 
-                    value={guests}
-                    onChange={(e) => setGuests(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold"
-                  >
+                  <select value={guests} onChange={(e) => setGuests(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold">
                     {Array.from({ length: accommodation.capacity }, (_, i) => (
                       <option key={i + 1} value={i + 1}>{i + 1} {i === 0 ? 'Huésped' : 'Huéspedes'}</option>
                     ))}
                   </select>
                 </div>
-
-                <button 
-                  type="submit" 
-                  className="w-full bg-yamid-gold hover:bg-yamid-goldDark text-white py-4 rounded-lg font-bold text-lg transition-colors flex items-center justify-center space-x-2"
-                >
+                <button type="submit" className="w-full bg-yamid-gold hover:bg-yamid-goldDark text-white py-4 rounded-lg font-bold text-lg transition-colors flex items-center justify-center space-x-2">
                   <MessageCircle className="w-5 h-5" />
                   <span>Consultar Disponibilidad</span>
                 </button>
               </form>
-
               <div className="mt-6 pt-6 border-t border-gray-200 text-sm text-gray-600">
                 <p>💬 Serás redirigido a WhatsApp para confirmar tu reserva</p>
               </div>
             </div>
           </div>
-
         </div>
 
-        {/* Hospedajes Relacionados */}
+        {/* Relacionados */}
         {relatedAccommodations.length > 0 && (
           <section className="mt-16">
             <h2 className="text-2xl font-bold text-yamid-palm mb-6">Hospedajes Similares</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedAccommodations.map((related: any) => (
-                <Link 
-                  key={related.slug}
-                  href={`/hospedaje/${related.slug}`}
-                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-                >
+                <Link key={related.slug} href={`/hospedaje/${related.slug}`} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="relative h-40 bg-yamid-sand">
-                    <Image 
-                      src={related.heroImage}
-                      alt={related.name}
-                      fill
-                      className="object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        target.parentElement!.innerHTML = `
-                          <div class="absolute inset-0 flex items-center justify-center">
-                            <span class="text-5xl">${related.emoji}</span>
-                          </div>
-                        `;
-                      }}
-                    />
+                    <Image src={related.heroImage} alt={related.name} fill className="object-cover" onError={(e) => { const target = e.target as HTMLImageElement; target.style.display = 'none'; target.parentElement!.innerHTML = `<div class="absolute inset-0 flex items-center justify-center"><span class="text-5xl">${related.emoji}</span></div>`; }} />
                   </div>
                   <div className="p-4">
                     <h3 className="font-bold text-yamid-palm">{related.name}</h3>
                     <p className="text-sm text-gray-600">{related.location}</p>
-                    <p className="text-yamid-gold font-bold mt-2">${related.price.toLocaleString()} COP/noche</p>
+                    <p className="text-yamid-gold font-bold mt-2">{related.priceText}</p>
                   </div>
                 </Link>
               ))}
@@ -463,15 +948,23 @@ export default function AccommodationDetail() {
       </section>
 
       {/* Lightbox */}
-      <Lightbox
-        open={lightboxOpen}
-        close={() => setLightboxOpen(false)}
-        slides={photos}
-        index={currentImageIndex}
-        plugins={[Thumbnails, Zoom]}
-        thumbnails={{}}
-        zoom={{ maxZoomPixelRatio: 3 }}
-      />
+      <Lightbox open={lightboxOpen} close={() => setLightboxOpen(false)} slides={photos} index={currentImageIndex} plugins={[Thumbnails, Zoom]} thumbnails={{}} zoom={{ maxZoomPixelRatio: 3 }} />
     </main>
+  );
+}
+
+// ✅ Componente principal que envuelve en Suspense
+export default function AccommodationDetail() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yamid-gold mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando detalle...</p>
+        </div>
+      </div>
+    }>
+      <AccommodationDetailContent />
+    </Suspense>
   );
 }
