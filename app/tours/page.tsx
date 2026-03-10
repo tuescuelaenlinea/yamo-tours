@@ -75,7 +75,7 @@ const allTours = [
     reviews: 278,
     image: '/images/tours/playa-blanca/hero.jpg',
     emoji: '🏖️',
-    category: 'playa',
+    category: 'baru',
     featured: false
   },
   {
@@ -140,7 +140,9 @@ const allTours = [
 const categories = [
   { id: 'todos', name: 'Todos los Tours', icon: '🎯' },
   { id: 'beach-club', name: 'Beach Club', icon: '🏖️' },
-  { id: 'islas', name: 'Islas', icon: '🏝️' },
+  { id: 'islas', name: 'Islas del Rosario', icon: '🏝️' },
+  { id: 'baru', name: 'Barú', icon: '🏖️' },
+  { id: 'golfo', name: 'Golfo de Morrosquillo', icon: '⛵' },
   { id: 'playa', name: 'Playas', icon: '🌊' },
   { id: 'gastronomico', name: 'Gastronómicos', icon: '🍽️' },
   { id: 'cultural', name: 'Culturales', icon: '🏰' },

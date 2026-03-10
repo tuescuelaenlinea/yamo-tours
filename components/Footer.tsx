@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           {/* Columna 1: Información */}
           <div>
-            <h3 className="text-2xl font-bold text-yamid-gold mb-4">YAMO Tours</h3>
+            <h3 className="text-2xl font-bold text-yamid-gold mb-4">YAMO TOURS</h3>
             <p className="text-gray-300 mb-4">
               Agencia de turismo • Agencia de viajes • Alquiler de casas de vacaciones
             </p>
@@ -112,7 +112,7 @@ export default function Footer() {
         <div className="border-t border-gray-700 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm mb-4 md:mb-0">
-              © 2025 YAMO Tours. Todos los derechos reservados.
+              © 2025 YAMO TOURS. Todos los derechos reservados.
             </p>
             <div className="flex space-x-6 text-sm">
               <Link href="/privacidad" className="text-gray-400 hover:text-yamid-gold transition-colors">

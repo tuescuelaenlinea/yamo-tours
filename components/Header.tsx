@@ -12,7 +12,7 @@ export default function Header() {
   const phoneNumber = '573013547422'; // ← Cambia por tu número real
   
   // ✅ Mensaje predeterminado
-  const message = 'Hola YAMID Tours 👋\nQuiero reservar un tour. ¿Me pueden ayudar?';
+  const message = 'Hola YAMO TOURS 👋\nQuiero reservar un tour. ¿Me pueden ayudar?';
   
   // ✅ URL de WhatsApp
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
@@ -25,13 +25,13 @@ export default function Header() {
           <Link href="/" className="flex items-center space-x-3">
             <Image 
               src="/logo.svg" 
-              alt="YAMID Tours Logo" 
+              alt="YAMO TOURS Logo" 
               width={60} 
               height={60}
               className="object-contain"
             />
             <div>
-              <h1 className="text-2xl font-bold text-yamid-palm">YAMOTours</h1>
+              <h1 className="text-2xl font-bold text-yamid-palm">YAMO TOURS</h1>
               <p className="text-xs text-yamid-gold-dark">Tu aventura en el Caribe</p>
             </div>
           </Link>
@@ -48,8 +48,11 @@ export default function Header() {
               Tours
             </Link>
             <Link href="/transporte" className="text-yamid-dark hover:text-yamid-gold transition-colors font-medium">
-              Transportes
+              Botes y Yates 
             </Link> 
+            <Link href="/city-tours" className="text-yamid-dark hover:text-yamid-gold transition-colors font-medium">
+              City Tours
+            </Link>
              <Link href="/hospedaje" className="text-yamid-dark hover:text-yamid-gold transition-colors font-medium">
               Hospedajes
             </Link>            
@@ -58,16 +61,25 @@ export default function Header() {
             </Link>
           </nav>
 
-          {/* ✅ Botón Reserva Desktop - Funcional */}
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden md:block bg-yamid-gold hover:bg-yamid-goldDark text-white px-6 py-2 rounded-lg font-semibold transition-colors"
-          >
-            Reservar Ahora
-          </a>
 
+          {/* ✅ Botón Reserva Desktop - Funcional */}
+          {/* Botón de Pago Bold - Desktop */}
+            <a
+              href="https://checkout.bold.co/payment/LNK_767BW6M1SW"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden lg:block bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-semibold transition-colors mr-4"
+            >
+              💳 Pagar
+            </a>
+
+{/* Botón Reserva - Desktop 
+<Link
+  href="/contacto"
+  className="hidden lg:block bg-yamid-gold hover:bg-yamid-goldDark text-white px-6 py-2 rounded-lg font-semibold transition-colors"
+>
+  Reservar Ahora
+</Link>*/}
           {/* Botón Hamburguesa Móvil */}
           <button 
             className="md:hidden text-yamid-dark"
@@ -124,7 +136,7 @@ export default function Header() {
                 Contacto
               </Link>
               
-              {/* ✅ Botón Reserva Móvil - Funcional */}
+              {/* ✅ Botón Reserva Móvil - Funcional 
               <a
                 href={whatsappUrl}
                 target="_blank"
@@ -133,7 +145,15 @@ export default function Header() {
                 onClick={() => setMenuOpen(false)}
               >
                 Reservar Ahora
-              </a>
+              </a>*/}
+              <a
+              href="https://checkout.bold.co/payment/LNK_767BW6M1SW"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="lg:block bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-semibold transition-colors mr-4 text-center"
+            >
+              💳 Pagar
+            </a>
             </nav>
           </div>
         )}

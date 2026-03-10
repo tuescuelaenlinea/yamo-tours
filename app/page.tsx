@@ -19,7 +19,7 @@ const sliderTours = [
     slug: 'yamo',
     name: 'Agencia de turismo',
     description: 'Exclusivo beach club con playa privada y piscina infinity',
-    image: '/images/cartagena-yamo2.jpg',
+    image: '/images/cartagena.webp',
     duration: '8 horas',
     price: 0,
     emoji: '🏝️',
@@ -29,7 +29,7 @@ const sliderTours = [
     slug: 'Bora-Bora',
     name: 'Bora Bora Beach Club',
     description: 'Exclusivo beach club con playa privada y piscina infinity',
-    image: '/images/tours/Bora-Bora/hero.jpg',
+    image: '/images/tours/Bora-Bora/bora-bora.webp',
     duration: '8 horas',
     price: 150000,
     emoji: '🏝️',
@@ -49,7 +49,7 @@ const sliderTours = [
     slug: 'sibarita',
     name: 'Cena Sibarita Master',
     description: 'Experiencia gastronómica única en Cartagena',
-    image: '/images/tours/sibarita/hero.jpg',
+    image: '/images/tours/sibarita/sibarita.webp',
     duration: '4 horas',
     price: 180000,
     emoji: '🍽️',
@@ -150,9 +150,10 @@ export default function Home() {
                     src={tour.image}
                     alt={tour.name}
                     fill
-                    priority={index === 0}
+                    priority={index === 0}  // ✅ Solo la primera slide carga prioritaria
+                    quality={85}            // ✅ NUEVO: Calidad 85% (óptimo para WebP/JPG)
                     className={`object-cover ken-burns-effect`}
-                    sizes="100vw"
+                    sizes="100vw"           // ✅ Ya está bien configurado
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.style.display = 'none';
@@ -355,6 +356,59 @@ export default function Home() {
           </div>
         </div>
       </section>
+      {/* Sección de Pago Bold */}
+<section className="bg-white py-16">
+  <div className="container mx-auto px-4">
+    <div className="max-w-4xl mx-auto bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-8 md:p-12 shadow-xl">
+      <div className="text-center mb-8">
+        <div className="inline-block bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold mb-4">
+          💳 Pago Seguro
+        </div>
+        <h2 className="text-3xl md:text-4xl font-bold text-yamid-palm mb-4">
+          Realiza tu Pago con Bold
+        </h2>
+        <p className="text-gray-700 text-lg mb-6">
+          Vas a pagar a <strong>Yamotours Cartagena</strong>, un Negocio Master en Bold con respaldo y experiencia.
+        </p>
+      </div>
+      
+      <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="text-center p-4 bg-white rounded-lg shadow">
+          <div className="text-3xl mb-2">⏳</div>
+          <h3 className="font-bold text-yamid-palm mb-1">Trayectoria</h3>
+          <p className="text-sm text-gray-600">Comercio con historial verificado en Bold</p>
+        </div>
+        <div className="text-center p-4 bg-white rounded-lg shadow">
+          <div className="text-3xl mb-2">🛍️</div>
+          <h3 className="font-bold text-yamid-palm mb-1">Seguridad</h3>
+          <p className="text-sm text-gray-600">Procesamos pagos de forma segura y confiable</p>
+        </div>
+        <div className="text-center p-4 bg-white rounded-lg shadow">
+          <div className="text-3xl mb-2">✅</div>
+          <h3 className="font-bold text-yamid-palm mb-1">Verificado</h3>
+          <p className="text-sm text-gray-600">Datos verificados exitosamente</p>
+        </div>
+      </div>
+      
+      <div className="text-center">
+        <a
+          href="https://checkout.bold.co/payment/LNK_767BW6M1SW"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center bg-green-600 hover:bg-green-700 text-white px-10 py-4 rounded-lg font-bold text-lg transition-all transform hover:scale-105 shadow-lg"
+        >
+          💳 Ir a Pagar con Bold
+          <svg className="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+        <p className="text-sm text-gray-500 mt-4">
+          🔒 Pago 100% seguro • Redirección a plataforma Bold
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* CTA Section */}
       <section className="bg-gradient-to-br from-yamid-palm to-yamid-gold py-20">
