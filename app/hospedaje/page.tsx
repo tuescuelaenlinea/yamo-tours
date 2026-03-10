@@ -412,6 +412,7 @@ const accommodations = [
     category: 'aura-baru'
   },
 
+
   // === FINCA VERANERAS - TURBACO ===
   {
     slug: 'finca-veraneras',
@@ -434,7 +435,8 @@ const accommodations = [
     images: Array.from({ length: 3 }, (_, i) => `/images/hospedaje/finca-veraneras/${i + 1}.jpg`),
     heroImage: '/images/hospedaje/finca-veraneras/finca-veraneras.jpg',
     category: 'finca'
-  }
+  }, 
+  
 ];
 
 // Categorías de hospedaje
@@ -512,7 +514,7 @@ function HospedajeContent() {
       acc.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
       acc.description.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesType = selectedType === 'todos' || acc.category === selectedType;
+    const matchesType = selectedType === 'todos' || acc.type === selectedType;
     
     let matchesPrice = true;
     if (priceRange === 'economico') matchesPrice = acc.price < 400000;
