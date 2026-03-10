@@ -19,7 +19,7 @@ const sliderTours = [
     slug: 'yamo',
     name: 'Agencia de turismo',
     description: 'Exclusivo beach club con playa privada y piscina infinity',
-    image: '/images/cartagena.webp',
+    image: '/images/cartagena1.webp',
     duration: '8 horas',
     price: 0,
     emoji: '🏝️',
