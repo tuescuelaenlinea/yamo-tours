@@ -14,74 +14,82 @@ import 'swiper/css/navigation';
 import 'swiper/css/effect-fade';
 
 // Datos de tours para el slider
+// ⚠️ CORRECCIÓN: Los slugs ahora coinciden EXACTAMENTE con toursData en la página de detalle
 const sliderTours = [
-    {
-    slug: 'yamo',
+  {
+    slug: 'yamo', // Este es un slide promocional genérico, no requiere match en DB si no tiene botón
     name: 'Agencia de turismo',
     description: 'Exclusivo beach club con playa privada y piscina infinity',
     image: '/images/cartagena1.webp',
     duration: '8 horas',
     price: 0,
     emoji: '🏝️',
-    showInfo: false  // ✅ PRIMERA SLIDE: Sin texto ni botones
+    showInfo: false 
   },
   {
-    slug: 'Bora-Bora',
+    // ✅ SLUG CORREGIDO: Coincide con la DB ('bora-bora-beach-club')
+    slug: 'bora-bora-beach-club',
     name: 'Bora Bora Beach Club',
     description: 'Exclusivo beach club con playa privada y piscina infinity',
-    image: '/images/tours/Bora-Bora/bora-bora.webp',
-    duration: '8 horas',
-    price: 150000,
+    // ✅ IMAGEN CORREGIDA: Ruta consistente con la DB
+    image: '/images/tours/Bora-Bora/hero.jpg',
+    duration: '7h',
+    price: 400000,
     emoji: '🏝️',
-    showInfo: true  // ✅ PRIMERA SLIDE: Sin texto ni botones
+    showInfo: true
   },
   {
-    slug: 'makani',
+    // ✅ SLUG CORREGIDO: Coincide con la DB ('makani-beach-club')
+    slug: 'makani-beach-club',
     name: 'Makani - Club de playa Luxury',
     description: 'Experiencia de lujo en Tierra Bomba con gastronomía gourmet',
+    // ✅ IMAGEN CORREGIDA
     image: '/images/tours/makani/hero.jpg',
-    duration: '6 horas',
-    price: 120000,
-    emoji: '🏖️',
-    showInfo: true  // ✅ Slides siguientes: Con información
+    duration: '7h',
+    price: 420000,
+    emoji: '✨',
+    showInfo: true
   },
   {
-    slug: 'sibarita',
+    // ✅ SLUG CORREGIDO: Coincide con la DB ('cena-sibarita-master')
+    slug: 'cena-sibarita-master',
     name: 'Cena Sibarita Master',
     description: 'Experiencia gastronómica única en Cartagena',
+    // ✅ IMAGEN CORREGIDA
     image: '/images/tours/sibarita/sibarita.webp',
-    duration: '4 horas',
-    price: 180000,
+    duration: '2h',
+    price: 310000,
     emoji: '🍽️',
     showInfo: true
   }
 ];
 
 // Tours populares (debajo del slider)
+// ⚠️ CORRECCIÓN: Slugs e imágenes alineados con la base de datos
 const popularTours = [
   {
-    slug: 'Bora-Bora',
+    slug: 'bora-bora-beach-club',
     name: 'Bora Bora Beach Club',
-    duration: '8 horas',
-    location: 'Desde Cartagena',
+    duration: '7h',
+    location: 'Islas del Rosario',
     image: '/images/tours/Bora-Bora/hero.jpg',
     emoji: '🏝️'
   },
   {
-    slug: 'makani',
-    name: 'Makani - Club de playa Luxury en Tierra Bomba',
-    duration: '6 horas',
-    location: 'Desde Cartagena',
+    slug: 'makani-beach-club',
+    name: 'Pasadía Makani',
+    duration: '7h',
+    location: 'Tierra Bomba',
     image: '/images/tours/makani/hero.jpg',
-    emoji: '🏖️'
+    emoji: '✨'
   },
   {
-    slug: 'sibarita',
-    name: 'Cena Sibarita Master',
-    duration: '4 horas',
-    location: 'Desde Cartagena',
-    image: '/images/tours/sibarita/hero.jpg',
-    emoji: '🌋'
+    slug: 'cena-sibarita-master',
+    name: '🌅🚢 Cena Sibarita Master 🚢🌅',
+    duration: '2h',
+    location: 'Cartagena',
+    image: '/images/tours/sibarita/sibarita.webp',
+    emoji: '🍽️'
   }
 ];
 
@@ -150,10 +158,10 @@ export default function Home() {
                     src={tour.image}
                     alt={tour.name}
                     fill
-                    priority={index === 0}  // ✅ Solo la primera slide carga prioritaria
-                    quality={85}            // ✅ NUEVO: Calidad 85% (óptimo para WebP/JPG)
+                    priority={index === 0}
+                    quality={85}
                     className={`object-cover ken-burns-effect`}
-                    sizes="100vw"           // ✅ Ya está bien configurado
+                    sizes="100vw"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.style.display = 'none';
@@ -187,6 +195,7 @@ export default function Home() {
                           {tour.description}
                         </p>
                         <div className="flex flex-wrap gap-4">
+                          {/* ✅ ENLACE CORREGIDO: Apunta al slug exacto de la DB */}
                           <Link
                             href={`/tours/${tour.slug}`}
                             className="bg-yamid-gold hover:bg-yamid-goldDark text-white px-8 py-4 rounded-lg font-semibold transition-all transform hover:scale-105 inline-flex items-center"
@@ -197,10 +206,10 @@ export default function Home() {
                             </svg>
                           </Link>
                           <Link
-                            href="/destinos"
+                            href="/tours"
                             className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white border-2 border-white px-8 py-4 rounded-lg font-semibold transition-all"
                           >
-                            Ver Destinos
+                            Ver Todos los Tours
                           </Link>
                         </div>
                       </div>
@@ -232,71 +241,69 @@ export default function Home() {
       </section>
 
       {/* Buscador Flotante */}
-<section className="relative -mt-16 z-20">
-  <div className="container mx-auto px-4">
-    <form 
-      onSubmit={(e) => {
-        e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        const destino = formData.get('destino') as string;
-        const fecha = formData.get('fecha') as string;
-        const personas = formData.get('personas') as string;
-        
-        // Construir URL con parámetros de búsqueda
-        const params = new URLSearchParams();
-        if (destino) params.set('q', destino);
-        if (fecha) params.set('fecha', fecha);
-        if (personas) params.set('personas', personas);
-        
-        // Redirigir a la página de tours con los parámetros
-        window.location.href = `/tours?${params.toString()}`;
-      }}
-      className="bg-white p-6 rounded-lg shadow-2xl max-w-4xl mx-auto"
-    >
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="relative">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Destino</label>
-          <input
-            type="text"
-            name="destino"
-            placeholder="¿A dónde quieres ir?"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
-          <input
-            type="date"
-            name="fecha"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Personas</label>
-          <select 
-            name="personas"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
+      <section className="relative -mt-16 z-20">
+        <div className="container mx-auto px-4">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const destino = formData.get('destino') as string;
+              const fecha = formData.get('fecha') as string;
+              const personas = formData.get('personas') as string;
+              
+              const params = new URLSearchParams();
+              if (destino) params.set('q', destino);
+              if (fecha) params.set('fecha', fecha);
+              if (personas) params.set('personas', personas);
+              
+              window.location.href = `/tours?${params.toString()}`;
+            }}
+            className="bg-white p-6 rounded-lg shadow-2xl max-w-4xl mx-auto"
           >
-            <option value="">Personas</option>
-            <option value="1">1 Persona</option>
-            <option value="2">2 Personas</option>
-            <option value="3">3 Personas</option>
-            <option value="4">4 Personas</option>
-            <option value="5+">5+ Personas</option>
-          </select>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="relative">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Destino</label>
+                <input
+                  type="text"
+                  name="destino"
+                  placeholder="¿A dónde quieres ir?"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
+                <input
+                  type="date"
+                  name="fecha"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Personas</label>
+                <select 
+                  name="personas"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
+                >
+                  <option value="">Personas</option>
+                  <option value="1">1 Persona</option>
+                  <option value="2">2 Personas</option>
+                  <option value="3">3 Personas</option>
+                  <option value="4">4 Personas</option>
+                  <option value="5+">5+ Personas</option>
+                </select>
+              </div>
+              <div className="flex items-end">
+                <button 
+                  type="submit"
+                  className="w-full bg-yamid-gold hover:bg-yamid-goldDark text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                >
+                  Buscar Tours
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
-        <div className="flex items-end">
-          <button 
-            type="submit"
-            className="w-full bg-yamid-gold hover:bg-yamid-goldDark text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-          >
-            Buscar Tours
-          </button>
-        </div>
-      </div>
-    </form>
-  </div>
-</section>
+      </section>
 
       {/* Tours Populares */}
       <section className="py-20">
@@ -356,59 +363,60 @@ export default function Home() {
           </div>
         </div>
       </section>
+
       {/* Sección de Pago Bold */}
-<section className="bg-white py-16">
-  <div className="container mx-auto px-4">
-    <div className="max-w-4xl mx-auto bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-8 md:p-12 shadow-xl">
-      <div className="text-center mb-8">
-        <div className="inline-block bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold mb-4">
-          💳 Pago Seguro
+      <section className="bg-white py-16">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-8 md:p-12 shadow-xl">
+            <div className="text-center mb-8">
+              <div className="inline-block bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold mb-4">
+                💳 Pago Seguro
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-yamid-palm mb-4">
+                Realiza tu Pago con Bold
+              </h2>
+              <p className="text-gray-700 text-lg mb-6">
+                Vas a pagar a <strong>Yamotours Cartagena</strong>, un Negocio Master en Bold con respaldo y experiencia.
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              <div className="text-center p-4 bg-white rounded-lg shadow">
+                <div className="text-3xl mb-2">⏳</div>
+                <h3 className="font-bold text-yamid-palm mb-1">Trayectoria</h3>
+                <p className="text-sm text-gray-600">Comercio con historial verificado en Bold</p>
+              </div>
+              <div className="text-center p-4 bg-white rounded-lg shadow">
+                <div className="text-3xl mb-2">🛍️</div>
+                <h3 className="font-bold text-yamid-palm mb-1">Seguridad</h3>
+                <p className="text-sm text-gray-600">Procesamos pagos de forma segura y confiable</p>
+              </div>
+              <div className="text-center p-4 bg-white rounded-lg shadow">
+                <div className="text-3xl mb-2">✅</div>
+                <h3 className="font-bold text-yamid-palm mb-1">Verificado</h3>
+                <p className="text-sm text-gray-600">Datos verificados exitosamente</p>
+              </div>
+            </div>
+            
+            <div className="text-center">
+              <a
+                href="https://checkout.bold.co/payment/LNK_767BW6M1SW"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center bg-green-600 hover:bg-green-700 text-white px-10 py-4 rounded-lg font-bold text-lg transition-all transform hover:scale-105 shadow-lg"
+              >
+                💳 Ir a Pagar con Bold
+                <svg className="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </a>
+              <p className="text-sm text-gray-500 mt-4">
+                🔒 Pago 100% seguro • Redirección a plataforma Bold
+              </p>
+            </div>
+          </div>
         </div>
-        <h2 className="text-3xl md:text-4xl font-bold text-yamid-palm mb-4">
-          Realiza tu Pago con Bold
-        </h2>
-        <p className="text-gray-700 text-lg mb-6">
-          Vas a pagar a <strong>Yamotours Cartagena</strong>, un Negocio Master en Bold con respaldo y experiencia.
-        </p>
-      </div>
-      
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
-        <div className="text-center p-4 bg-white rounded-lg shadow">
-          <div className="text-3xl mb-2">⏳</div>
-          <h3 className="font-bold text-yamid-palm mb-1">Trayectoria</h3>
-          <p className="text-sm text-gray-600">Comercio con historial verificado en Bold</p>
-        </div>
-        <div className="text-center p-4 bg-white rounded-lg shadow">
-          <div className="text-3xl mb-2">🛍️</div>
-          <h3 className="font-bold text-yamid-palm mb-1">Seguridad</h3>
-          <p className="text-sm text-gray-600">Procesamos pagos de forma segura y confiable</p>
-        </div>
-        <div className="text-center p-4 bg-white rounded-lg shadow">
-          <div className="text-3xl mb-2">✅</div>
-          <h3 className="font-bold text-yamid-palm mb-1">Verificado</h3>
-          <p className="text-sm text-gray-600">Datos verificados exitosamente</p>
-        </div>
-      </div>
-      
-      <div className="text-center">
-        <a
-          href="https://checkout.bold.co/payment/LNK_767BW6M1SW"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center bg-green-600 hover:bg-green-700 text-white px-10 py-4 rounded-lg font-bold text-lg transition-all transform hover:scale-105 shadow-lg"
-        >
-          💳 Ir a Pagar con Bold
-          <svg className="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
-        </a>
-        <p className="text-sm text-gray-500 mt-4">
-          🔒 Pago 100% seguro • Redirección a plataforma Bold
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
+      </section>
 
       {/* CTA Section */}
       <section className="bg-gradient-to-br from-yamid-palm to-yamid-gold py-20">

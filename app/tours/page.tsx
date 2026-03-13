@@ -983,6 +983,95 @@ const allTours = [
     images: Array.from({ length: 7 }, (_, i) => `/images/tours/isla-capri/gallery-${i + 1}.jpg`),
     heroImage: '/images/tours/isla-capri/hero.jpg'
   },
+  // === ISLAS DEL ROSARIO - IBIZA ISLAND BEACH CLUB ===
+{
+  slug: 'ibiza-island-vip',
+  name: 'PASADIA IBBIZA ISLAND BEACH CLUB - VIP 🏝️❤️🏹',
+  category: 'islas',
+  location: 'Islas del Rosario',
+  description: 'Experiencia VIP exclusiva en Ibiza Island con cama de playa en primera línea, menú gourmet de 7 opciones incluyendo Filet Mignon y Pulpo, y barra de bienvenida premium.',
+  duration: '7h',
+  price: 0, // ⚠️ IMPORTANTE: Debes definir el precio numérico aquí (ej: 450000)
+  priceText: 'Consultar Precio VIP',
+  rating: 5.0,
+  reviews: 0,
+  image: '/images/tours/ibbiza/6.jpg',
+  emoji: '👑',
+  includes: [
+    'Transporte en lancha deportiva Ida y vuelta',
+    '1 Copa de champagne',
+    'Una Cerveza Nacional por persona',
+    'Almuerzo a elegir entre 7 opciones gourmet (Pargo rojo, Cazuela, Pulpo, Arroz marinero, Cordon bleu, Filet mignon, Baby beef)',
+    'Bebida: Agua o Gaseosa',
+    'Uso de Zonas Sociales',
+    'Piscina de agua salada',
+    'DJ en vivo y Animador',
+    'Cama de playa para 3 pax en primera línea o Salas en segunda línea frente al mar',
+    'Playa privada',
+    'Ducha de agua dulce',
+    'Toallas incluidas',
+    'Pet Friendly (Mascotas pequeñas con bozal y vacuna)',
+    'Traslado al oceanario',
+    'Snorkeling y Kayak'
+  ],
+  excludes: [
+    'Gastos Administrativos ($26.500 P/P)',
+    'Seguro de asistencia médica ($8.500 p/p)',
+    'Ingreso de Alimentos y Bebidas externos',
+    'No apto para mujeres embarazadas'
+  ],
+  itinerary: [
+    { time: '07:20 AM', activity: 'Registro en Marina Todomar' },
+    { time: '08:30 AM - 08:40 AM', activity: 'Salida hacia la isla' },
+    { time: '03:15 PM - 03:30 PM', activity: 'Retorno a Cartagena (sujeto al clima)' }
+  ],
+  images: Array.from({ length: 8 }, (_, i) => `/images/tours/ibbiza/${i + 1}.jpg`),
+  heroImage: '/images/tours/ibbiza/6.jpg'
+},
+{
+  slug: 'ibiza-island-tradicional',
+  name: 'PASADIA IBBIZA ISLAND BEACH CLUB - TRADICIONAL 🏝️❤️🏹',
+  category: 'islas',
+  location: 'Islas del Rosario',
+  description: 'Disfruta de un día paradisíaco en Ibiza Island con almuerzo típico o internacional, cóctel de bienvenida, música en vivo y acceso a todas las instalaciones.',
+  duration: '7h',
+  price: 0, // ⚠️ IMPORTANTE: Debes definir el precio numérico aquí (ej: 380000)
+  priceText: 'Consultar Precio Tradicional',
+  rating: 4.8,
+  reviews: 0,
+  image: '/images/tours/ibbiza/6.jpg',
+  emoji: '🏖️',
+  includes: [
+    'Transporte en lancha deportiva Ida y vuelta',
+    'Cóctel de Bienvenida (con o sin alcohol)',
+    'Una Cerveza Nacional por persona',
+    'Almuerzo a elegir entre 7 opciones (Pescado frito, Sancocho IBBIZA, Pechuga, Vegetariano, Pastas con mariscos, Carbonara, Menú infantil)',
+    'Bebida: Agua o Gaseosa',
+    'Uso de Zonas Sociales',
+    'Piscina de agua salada',
+    'DJ en vivo y Animador',
+    'Sillas Asoleadoras',
+    'Playa privada',
+    'Ducha de agua dulce',
+    'Pet Friendly (Mascotas pequeñas con bozal y vacuna)',
+    'Traslado al oceanario',
+    'Snorkeling y Kayak'
+  ],
+  excludes: [
+    'Toallas',
+    'Gastos Administrativos ($26.500 P/P)',
+    'Seguro de asistencia médica ($8.500 p/p)',
+    'Ingreso de Alimentos y Bebidas externos',
+    'No apto para mujeres embarazadas'
+  ],
+  itinerary: [
+    { time: '07:20 AM', activity: 'Registro en Marina Todomar' },
+    { time: '08:30 AM - 08:40 AM', activity: 'Salida hacia la isla' },
+    { time: '03:15 PM - 03:30 PM', activity: 'Retorno a Cartagena (sujeto al clima)' }
+  ],
+  images: Array.from({ length: 8 }, (_, i) => `/images/tours/ibbiza//${i + 1}.jpg`),
+  heroImage: '/images/tours/ibbiza/6.jpg'
+},
     // === TIERRA BOMBA ===
   {
     slug: 'tamarindo-beach-club',
@@ -1769,33 +1858,45 @@ const allTours = [
 
 // ✅ Componente interno que usa useSearchParams
 function ToursContent() {
+  // ✅ 1. Hooks de Next.js PRIMERO
   const searchParams = useSearchParams();
+  
+  // ✅ 2. Estados inicializados desde URL (sin useEffect conflictivo)
+  const [searchTerm, setSearchTerm] = useState(() => searchParams.get('q') || '');
   const [selectedFilter, setSelectedFilter] = useState(() => searchParams.get('filtro') || 'todos');
   const [priceRange, setPriceRange] = useState('todos');
   const [sortBy, setSortBy] = useState('popularity');
+  
+  // ✅ 3. Estados independientes
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedTour, setSelectedTour] = useState<any>(null);
 
-  // ✅ Filtrar por categoría Y ubicación combinadas
+  // ✅ 4. Lógica de filtrado con búsqueda funcional
   const filteredTours = useMemo(() => {
     return allTours.filter(tour => {
-      // Filtro combinado categoría + ubicación
+      // ✅ BÚSQUEDA POR TEXTO (nombre, ubicación, descripción)
+      const matchesSearch = !searchTerm || 
+        tour.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        tour.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        tour.description.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      // ✅ Filtro combinado categoría + ubicación
       const filter = tourFilters.find(f => f.id === selectedFilter);
       const matchesFilter = selectedFilter === 'todos' || 
         (tour.category === filter?.category && tour.location === filter?.location);
       
-      // Rango de precio
+      // ✅ Rango de precio
       let matchesPrice = true;
       if (priceRange === 'economico') matchesPrice = tour.price < 200000;
       else if (priceRange === 'medio') matchesPrice = tour.price >= 200000 && tour.price < 400000;
       else if (priceRange === 'premium') matchesPrice = tour.price >= 400000;
       
-      return matchesFilter && matchesPrice;
+      return matchesSearch && matchesFilter && matchesPrice;
     });
-  }, [selectedFilter, priceRange]);
+  }, [searchTerm, selectedFilter, priceRange]);
 
-  // ✅ Ordenar tours
+  // ✅ 5. Ordenar tours
   const sortedTours = useMemo(() => {
     return [...filteredTours].sort((a, b) => {
       if (sortBy === 'price-asc') return a.price - b.price;
@@ -1805,46 +1906,99 @@ function ToursContent() {
     });
   }, [filteredTours, sortBy]);
 
-  // ✅ Abrir lightbox
+  // ✅ 6. Limpiar filtros (definir SOLO UNA VEZ)
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedFilter('todos');
+    setPriceRange('todos');
+    setSortBy('popularity');
+  };
+
+  // ✅ 7. Abrir lightbox
   const openLightbox = (tour: any, index: number) => {
     setSelectedTour(tour);
     setCurrentImageIndex(index);
     setLightboxOpen(true);
   };
 
-  // ✅ Limpiar filtros
-  const clearFilters = () => {
-    setSelectedFilter('todos');
-    setPriceRange('todos');
-    setSortBy('popularity');
-  };
-
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-yamid-palm to-yamid-gold py-20">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative container mx-auto px-4 text-center text-white">
-          <h1 className="text-5xl font-bold mb-4">Nuestros Tours 🏝️</h1>
-          <p className="text-xl max-w-2xl mx-auto opacity-95">
-            Descubre las mejores experiencias en el Caribe colombiano
-          </p>
-        </div>
-      </section>
+     {/* Hero Section con Imagen de Fondo */}
+<section className="relative h-[300px] flex items-center justify-center overflow-hidden">
+  {/* 1. Imagen de Fondo */}
+  <div className="absolute inset-0 z-0">
+    <Image
+      src="/images/tours/ibbiza/6.jpg" // ⚠️ CAMBIA ESTA RUTA por tu imagen real (ej: /images/islas/rosario-aerea.jpg)
+      alt="Tours en Cartagena e Islas del Rosario"
+      fill
+      priority
+      quality={90}
+      className="object-cover"
+      sizes="100vw"
+      onError={(e) => {
+        // Fallback si la imagen no carga: usa el degradado original
+        const target = e.target as HTMLImageElement;
+        target.style.display = 'none';
+        const parent = target.parentElement;
+        if (parent) {
+          parent.className = "absolute inset-0 z-0 bg-gradient-to-br from-yamid-palm to-yamid-gold";
+        }
+      }}
+    />
+  </div>
+
+  {/* 2. Overlay Oscuro (Para legibilidad del texto) */}
+  <div className="absolute inset-0 bg-black/60 z-10"></div>
+
+  {/* 3. Overlay de Color Corporativo (Suave, para mantener la marca) */}
+  <div className="absolute inset-0 bg-gradient-to-b from-yamid-palm/30 via-transparent to-yamid-gold/20 z-10 mix-blend-overlay"></div>
+
+  {/* 4. Contenido de Texto */}
+  <div className="relative z-20 container mx-auto px-4 text-center text-white">
+    <h1 className="text-5xl md:text-6xl font-bold mb-4 drop-shadow-lg tracking-tight">
+      Nuestros Tours 🏝️
+    </h1>
+    <p className="text-xl md:text-2xl max-w-2xl mx-auto opacity-95 drop-shadow-md font-light">
+      Descubre las mejores experiencias en el Caribe colombiano
+    </p>
+    
+    {/* Opcional: Pequeña animación de scroll hacia abajo */}
+    <div className="mt-8 animate-bounce">
+      <svg className="w-8 h-8 mx-auto text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+      </svg>
+    </div>
+  </div>
+</section>
 
       {/* Filtros */}
       <section className="bg-white shadow-md sticky top-20 z-40 py-6">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-            {/* Buscador */}
+            {/* ✅ Buscador FUNCIONAL */}
             <div className="relative w-full lg:w-96">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="🔍 Buscar tour..."
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold"
+                placeholder="🔍 Buscar tour por nombre, ubicación..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold"
               />
+              {/* Botón para limpiar búsqueda */}
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-yamid-gold"
+                  aria-label="Limpiar búsqueda"
+                >
+                  ✕
+                </button>
+              )}
             </div>
+
             {/* Filtros */}
             <div className="flex flex-wrap gap-3 items-center">
               {/* Filtro Combinado Categoría + Ubicación */}
@@ -1881,13 +2035,19 @@ function ToursContent() {
               </select>
             </div>
           </div>
+        
           {/* Contador */}
           <div className="mt-4 flex items-center justify-between">
             <p className="text-gray-600">
               <span className="font-bold text-yamid-palm">{sortedTours.length}</span> tours encontrados
+              {searchTerm && <span className="ml-2">para "<strong>{searchTerm}</strong>"</span>}
             </p>
-            {(selectedFilter !== 'todos' || priceRange !== 'todos') && (
-              <button onClick={clearFilters} className="text-yamid-gold hover:underline text-sm font-medium">
+            {(searchTerm || selectedFilter !== 'todos' || priceRange !== 'todos') && (
+              <button 
+                type="button"
+                onClick={clearFilters} 
+                className="text-yamid-gold hover:underline text-sm font-medium"
+              >
                 Limpiar filtros
               </button>
             )}
@@ -1900,7 +2060,20 @@ function ToursContent() {
         {sortedTours.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-6xl mb-4">🔍</p>
-            <p className="text-gray-600">No encontramos tours con esos filtros</p>
+            <p className="text-gray-600">
+              {searchTerm 
+                ? `No encontramos tours para "${searchTerm}"` 
+                : 'No encontramos tours con esos filtros'}
+            </p>
+            {(searchTerm || selectedFilter !== 'todos' || priceRange !== 'todos') && (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="mt-4 text-yamid-gold hover:underline font-medium"
+              >
+                Ver todos los tours
+              </button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

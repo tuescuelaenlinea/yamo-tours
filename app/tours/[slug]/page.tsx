@@ -714,6 +714,92 @@ const toursData: Record<string, any> = {
     images: Array.from({ length: 9 }, (_, i) => `/images/tours/isla-del-pirata/gallery-${i + 1}.jpg`),
     heroImage: '/images/tours/isla-del-pirata/hero.jpg'
   },
+  // === ISLAS DEL ROSARIO - NUEVOS TOURS IBIZA ISLAND ===
+  'ibiza-island-vip': {
+    slug: 'ibiza-island-vip',
+    name: 'PASADIA IBBIZA ISLAND BEACH CLUB - VIP 🏝️❤️🏹',
+    category: 'islas',
+    location: 'Islas del Rosario',
+    description: 'Experiencia VIP exclusiva en Ibiza Island con cama de playa en primera línea, menú gourmet de 7 opciones incluyendo Filet Mignon y Pulpo, champagne de bienvenida y todas las comodidades premium.',
+    duration: '7h',
+    price: 0, // ⚠️ IMPORTANTE: Definir precio real aquí
+    priceText: 'Consultar Precio VIP',
+    rating: 5.0,
+    reviews: 0,
+    emoji: '👑',
+    includes: [
+      'Transporte en lancha deportiva Ida y vuelta',
+      '1 Copa de champagne',
+      'Una Cerveza Nacional por persona',
+      'Almuerzo a elegir entre 7 opciones gourmet (Pargo rojo, Cazuela de mariscos, Pulpo a la grillete, Arroz marinero, Cordon bleu, Filet mignon, Baby beef a la pimienta)',
+      'Bebida: Agua o Gaseosa',
+      'Uso de Zonas Sociales',
+      'Piscina de agua salada',
+      'DJ en vivo y Animador',
+      'Cama de playa para 3 pax en primera línea o Salas en segunda línea frente al mar',
+      'Playa privada',
+      'Ducha de agua dulce',
+      'Toallas incluidas',
+      'Pet Friendly (Mascotas pequeñas con bozal y vacuna)',
+      'Traslado al oceanario',
+      'Snorkeling y Kayak'
+    ],  excludes: [
+      'Gastos Administrativos ($26.500 P/P)',
+      'Seguro de asistencia médica ($8.500 p/p)',
+      'Ingreso de Alimentos y Bebidas externos',
+      'No apto para mujeres embarazadas'
+    ],
+    itinerary: [
+      { time: '07:20 AM', activity: 'Registro en Marina Todomar' },
+      { time: '08:30 AM - 08:40 AM', activity: 'Salida hacia la isla' },
+      { time: '03:15 PM - 03:30 PM', activity: 'Retorno a Cartagena (sujeto al clima)' }
+    ],
+    images: Array.from({ length: 8 }, (_, i) => `/images/tours/ibbiza/${i + 1}.jpg`),
+    heroImage: '/images/tours/ibbiza/6.jpg'
+  },
+  'ibiza-island-tradicional': {
+    slug: 'ibiza-island-tradicional',
+    name: 'PASADIA IBBIZA ISLAND BEACH CLUB - TRADICIONAL 🏝️❤️🏹',
+    category: 'islas',
+    location: 'Islas del Rosario',
+    description: 'Disfruta de un día paradisíaco en Ibiza Island con almuerzo típico o internacional, cóctel de bienvenida, música en vivo, sillas asoleadoras y acceso a todas las instalaciones del beach club.',
+    duration: '7h',
+    price: 0, // ⚠️ IMPORTANTE: Definir precio real aquí
+    priceText: 'Consultar Precio Tradicional',
+    rating: 4.8,
+    reviews: 0,
+    emoji: '🏖️',
+    includes: [
+      'Transporte en lancha deportiva Ida y vuelta',
+      'Cóctel de Bienvenida (con o sin alcohol)',
+      'Una Cerveza Nacional por persona',
+      'Almuerzo a elegir entre 7 opciones (Plato típico Pescado frito, Sancocho IBBIZA, Pechuga a la Plancha, Opción Vegetariana, Pastas con vegetales y Mariscos, Pastas Carbonara, Menú infantil)',
+      'Bebida: Agua o Gaseosa',
+      'Uso de Zonas Sociales',
+      'Piscina de agua salada',
+      'DJ en vivo y Animador',
+      'Sillas Asoleadoras',
+      'Playa privada',
+      'Ducha de agua dulce',
+      'Pet Friendly (Mascotas pequeñas con bozal y vacuna)',
+      'Traslado al oceanario',
+      'Snorkeling y Kayak'
+    ],
+    excludes: [
+      'Toallas',
+      'Gastos Administrativos ($26.500 P/P)',
+      'Seguro de asistencia médica ($8.500 p/p)',
+      'Ingreso de Alimentos y Bebidas externos',
+      'No apto para mujeres embarazadas'
+    ],
+    itinerary: [
+      { time: '07:20 AM', activity: 'Registro en Marina Todomar' },
+      { time: '08:30 AM - 08:40 AM', activity: 'Salida hacia la isla' },
+      { time: '03:15 PM - 03:30 PM', activity: 'Retorno a Cartagena (sujeto al clima)' }
+    ],
+    images: Array.from({ length: 8 }, (_, i) => `/images/tours/ibbiza/${i + 1}.jpg`),
+    heroImage: '/images/tours/ibbiza/6.jpg'
+  },
   'mantas-beach-club': {
     slug: 'mantas-beach-club',
     name: 'Mantas Beach Club',

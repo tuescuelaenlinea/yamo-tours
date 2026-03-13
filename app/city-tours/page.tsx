@@ -101,18 +101,54 @@ export default function TransportePage() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      {/* Hero */}
-      <section className="relative bg-gradient-to-br from-yamid-ocean to-yamid-palm py-20">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative container mx-auto px-4 text-center text-white">
-          <h1 className="text-5xl font-bold mb-4">
-            City Tours Exclusivos 🚌
-          </h1>
-          <p className="text-xl max-w-2xl mx-auto opacity-95">
-           Chivas, limusinas y más para disfrutar con estilo La Ciudad 
-          </p>
-        </div>
-      </section>
+     
+      {/* Hero Section con Imagen de Fondo */}
+<section className="relative h-[300px] flex items-center justify-center overflow-hidden">
+  {/* 1. Imagen de Fondo */}
+  <div className="absolute inset-0 z-0">
+    <Image
+      src="/images/transporte/chiva-rumbera-tradicional.jpg" // ⚠️ CAMBIA ESTA RUTA por tu imagen real (ej: /images/islas/rosario-aerea.jpg)
+      alt="Tours en Cartagena e Islas del Rosario"
+      fill
+      priority
+      quality={90}
+      className="object-cover"
+      sizes="100vw"
+      onError={(e) => {
+        // Fallback si la imagen no carga: usa el degradado original
+        const target = e.target as HTMLImageElement;
+        target.style.display = 'none';
+        const parent = target.parentElement;
+        if (parent) {
+          parent.className = "absolute inset-0 z-0 bg-gradient-to-br from-yamid-palm to-yamid-gold";
+        }
+      }}
+    />
+  </div>
+
+  {/* 2. Overlay Oscuro (Para legibilidad del texto) */}
+  <div className="absolute inset-0 bg-black/60 z-10"></div>
+
+  {/* 3. Overlay de Color Corporativo (Suave, para mantener la marca) */}
+  <div className="absolute inset-0 bg-gradient-to-b from-yamid-palm/30 via-transparent to-yamid-gold/20 z-10 mix-blend-overlay"></div>
+
+  {/* 4. Contenido de Texto */}
+  <div className="relative z-20 container mx-auto px-4 text-center text-white">
+    <h1 className="text-5xl md:text-6xl font-bold mb-4 drop-shadow-lg tracking-tight">
+      City Tours Exclusivos 🚌
+    </h1>
+    <p className="text-xl md:text-2xl max-w-2xl mx-auto opacity-95 drop-shadow-md font-light">
+      Chivas, limusinas y más para disfrutar con estilo La Ciudad 
+    </p>
+    
+    {/* Opcional: Pequeña animación de scroll hacia abajo */}
+    <div className="mt-8 animate-bounce">
+      <svg className="w-8 h-8 mx-auto text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+      </svg>
+    </div>
+  </div>
+</section>
 
       {/* Filtros */}
       <section className="bg-white shadow-md sticky top-20 z-40 py-6">
