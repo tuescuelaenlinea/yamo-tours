@@ -41,9 +41,9 @@ export default function Header() {
             <Link href="/" className="text-yamid-dark hover:text-yamid-gold transition-colors font-medium">
               Inicio
             </Link>
-            <Link href="/destinos" className="text-yamid-dark hover:text-yamid-gold transition-colors font-medium">
+            {/*<Link href="/destinos" className="text-yamid-dark hover:text-yamid-gold transition-colors font-medium">
               Destinos
-            </Link>
+            </Link>*/}
             <Link href="/tours" className="text-yamid-dark hover:text-yamid-gold transition-colors font-medium">
               Tours
             </Link>
@@ -100,13 +100,13 @@ export default function Header() {
               >
                 Inicio
               </Link>
-              <Link 
+              {/*<Link 
                 href="/destinos" 
                 className="text-yamid-dark hover:text-yamid-gold transition-colors font-medium px-4"
                 onClick={() => setMenuOpen(false)}
               >
                 Destinos
-              </Link>
+              </Link>*/}
               <Link 
                 href="/tours" 
                 className="text-yamid-dark hover:text-yamid-gold transition-colors font-medium px-4"

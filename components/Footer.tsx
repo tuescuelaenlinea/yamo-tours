@@ -34,11 +34,11 @@ export default function Footer() {
                   Inicio
                 </Link>
               </li>
-              <li>
+             {/* <li>
                 <Link href="/destinos" className="text-gray-300 hover:text-yamid-gold transition-colors">
                   Destinos
                 </Link>
-              </li>
+              </li>*/}
               <li>
                 <Link href="/tours" className="text-gray-300 hover:text-yamid-gold transition-colors">
                   Tours

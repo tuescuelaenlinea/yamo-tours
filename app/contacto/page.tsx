@@ -112,8 +112,8 @@ ${formData.mensaje}
     {
       icon: Mail,
       title: 'Correo Electrónico',
-      value: 'info@yamidtours.com',
-      href: 'mailto:info@yamidtours.com',
+      value: 'comercial@yamotours.com',
+      href: 'comercial@yamotours.com',
       color: 'bg-yamid-gold'
     },
     {
