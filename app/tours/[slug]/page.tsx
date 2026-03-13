@@ -346,8 +346,8 @@ const toursData: Record<string, any> = {
       { time: '9:00 AM', activity: 'Salida de Cartagena' },
       { time: '4:00 PM', activity: 'Regreso a Cartagena' }
     ],
-    images: Array.from({ length: 8 }, (_, i) => `/images/tours/isla-sol/gallery-${i + 1}.jpg`),
-    heroImage: '/images/tours/isla-sol/hero.jpg'
+    images: Array.from({ length: 9 }, (_, i) => `/images/tours/isla-pelicano/gallery-${i + 1}.jpg`),
+    heroImage: '/images/tours/isla-pelicano/hero.jpg'
   },
   'paue-beach-lounge': {
     slug: 'paue-beach-lounge',
