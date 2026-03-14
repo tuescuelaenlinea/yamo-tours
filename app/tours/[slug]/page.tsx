@@ -1990,6 +1990,8 @@ function TourDetailContent() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [tourDate, setTourDate] = useState(() => searchParams.get('fecha') || '');
   const [passengers, setPassengers] = useState(() => searchParams.get('personas') || '2');
+  const [customerName, setCustomerName] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
 
   // Si no se encuentra el tour
   if (!tour) {
@@ -2015,6 +2017,11 @@ function TourDetailContent() {
     // ✅ Manejar envío de reserva a WhatsApp (Corregido para iOS y Android)
   const handleReservation = (e: React.FormEvent) => {
     e.preventDefault();
+     // ✅ Validación simple: El nombre es obligatorio
+    if (!customerName.trim()) {
+      alert('Por favor, escribe tu nombre completo para continuar.');
+      return;
+    }
     
     // ✅ 1. Número limpio: Sin espacios, sin símbolos '+', solo código país + número
     const phoneNumber = '573013547422'; 
@@ -2025,8 +2032,12 @@ function TourDetailContent() {
     const total = priceNum * passengersNum;
     
     // ✅ 2. Mensaje estructurado
-    const message = `🌴 *NUEVA RESERVA - YAMID Tours* 🌴
+    const message = `🌴 *NUEVA RESERVA - YAMO TOURS* 🌴
 
+*Datos del Cliente:*
+👤 *Nombre:* ${customerName}
+📧 *Email:* ${customerEmail || 'No especificado'}
+━━━━━━━━━━━━━━━━━━━━
  *Detalles de la Reserva:*
 ━━━━━━━━━━━━━━━━━━━━
 🏝️ *Tour:* ${tour.name}
@@ -2241,6 +2252,30 @@ ${tour.includes.map((i: string) => `• ${i}`).join('\n')}
               </div>
 
               <form onSubmit={handleReservation} className="space-y-4">
+                {/* ✅ NUEVO CAMPO: Nombre Completo */}
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2">Nombre Completo *</label>
+                  <input 
+                    type="text" 
+                    placeholder="Ej: Juan Pérez"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
+                  />
+                </div>
+
+                {/* ✅ NUEVO CAMPO: Email */}
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2">Correo Electrónico</label>
+                  <input 
+                    type="email" 
+                    placeholder="ejemplo@correo.com"
+                    value={customerEmail}
+                    onChange={(e) => setCustomerEmail(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
+                  />
+                </div>
                 <div>
                   <label className="block text-gray-700 font-medium mb-2">Fecha del tour</label>
                   <input 
@@ -2277,12 +2312,13 @@ ${tour.includes.map((i: string) => `• ${i}`).join('\n')}
                   <span>Reservar por WhatsApp</span>
                 </button>
 
-                <button 
+               <button 
                   type="button" 
                   onClick={() => {
-                    const phoneNumber = '573001234567';
-                    const message = `Hola YAMID Tours 👋\nTengo una consulta sobre el tour: ${tour.name}`;
-                    const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+                    const phoneNumber = '573013547422'; // ✅ Mismo número principal
+                    const message = `Hola YAMID Tours 👋\nTengo una consulta sobre el tour: ${tour.name}\n\nMi nombre es: ${customerName || '(Nombre pendiente)'}`;
+                    // ✅ Usamos wa.me y SIN espacios
+                    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
                     window.open(url, '_blank', 'noopener,noreferrer');
                   }}
                   className="w-full border-2 border-yamid-gold text-yamid-gold hover:bg-yamid-gold hover:text-white py-3 rounded-lg font-semibold transition-colors"

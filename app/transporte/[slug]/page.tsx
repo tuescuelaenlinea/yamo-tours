@@ -1072,6 +1072,10 @@ export default function TransportDetail() {
   const [serviceTime, setServiceTime] = useState('');
   const [passengers, setPassengers] = useState('2');
 
+  // ✅ AGREGAR ESTAS DOS LÍNEAS:
+  const [customerName, setCustomerName] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
+
   if (!service) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -1089,12 +1093,24 @@ export default function TransportDetail() {
    // ✅ Manejar envío de cotización a WhatsApp (Corregido para iOS y Android)
   const handleReservation = (e: React.FormEvent) => {
     e.preventDefault();
+
+
+    // Validación simple
+    if (!customerName.trim()) {
+      alert('Por favor, escribe tu nombre completo para continuar.');
+      return;
+    }
     
     // ✅ 1. Número limpio sin espacios
     const phoneNumber = '573013547422'; 
     
     const message = `🚤 *NUEVA COTIZACIÓN - TRANSPORTE* 🚤
 
+    
+*Datos del Cliente:*
+👤 *Nombre:* ${customerName}
+📧 *Email:* ${customerEmail || 'No especificado'}
+━━━━━━━━━━━━━━━━━━━━
  *Detalles del Servicio:*
 ━━━━━━━━━━━━━━━━━━━━
 🚢 *Embarcación:* ${service.name}
@@ -1306,6 +1322,29 @@ export default function TransportDetail() {
               </div>
 
               <form onSubmit={handleReservation} className="space-y-4">
+                  {/* ✅ AGREGAR: Campo Nombre */}
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2">Nombre Completo *</label>
+                  <input 
+                    type="text" 
+                    placeholder="Ej: Juan Pérez"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
+                  />
+                </div>
+                 {/* ✅ AGREGAR: Campo Email */}
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2">Correo Electrónico</label>
+                  <input 
+                    type="email" 
+                    placeholder="ejemplo@correo.com"
+                    value={customerEmail}
+                    onChange={(e) => setCustomerEmail(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
+                  />
+                </div>
                 <div>
                   <label className="block text-gray-700 font-medium mb-2">Fecha del servicio</label>
                   <input 

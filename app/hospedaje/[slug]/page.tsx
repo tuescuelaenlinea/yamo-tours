@@ -732,6 +732,10 @@ function AccommodationDetailContent() {
   const [checkOutDate, setCheckOutDate] = useState(() => searchParams.get('checkout') || '');
   const [guests, setGuests] = useState('2');
 
+  // ✅ NUEVOS ESTADOS: Nombre y Email
+  const [customerName, setCustomerName] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
+
   if (!accommodation) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -750,6 +754,12 @@ function AccommodationDetailContent() {
   const handleReservation = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validación simple
+    if (!customerName.trim()) {
+      alert('Por favor, escribe tu nombre completo para continuar.');
+      return;
+    }
+
     // ✅ 1. Número limpio sin espacios
     const phoneNumber = '573013547422'; 
     
@@ -764,6 +774,11 @@ function AccommodationDetailContent() {
     const total = priceNum * nights * guestsNum;
     
     const message = `🏨 *NUEVA RESERVA - HOSPEDAJE* 🏨
+
+*Datos del Cliente:*
+👤 *Nombre:* ${customerName}
+📧 *Email:* ${customerEmail || 'No especificado'}
+━━━━━━━━━━━━━━━━━━━━
 
  *Detalles de la Reserva:*
 ━━━━━━━━━━━━━━━━━━━━
@@ -942,6 +957,29 @@ function AccommodationDetailContent() {
                 <p className="text-3xl font-bold text-yamid-palm">{accommodation.priceText}</p>
               </div>
               <form onSubmit={handleReservation} className="space-y-4">
+                 {/* ✅ NUEVO CAMPO: Nombre Completo */}
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2">Nombre Completo *</label>
+                  <input 
+                    type="text" 
+                    placeholder="Ej: Juan Pérez"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
+                  />
+                </div>
+                {/* ✅ NUEVO CAMPO: Email */}
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2">Correo Electrónico</label>
+                  <input 
+                    type="email" 
+                    placeholder="ejemplo@correo.com"
+                    value={customerEmail}
+                    onChange={(e) => setCustomerEmail(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
+                  />
+                </div>
                 <div>
                   <label className="block text-gray-700 font-medium mb-2">Check-in</label>
                   <input type="date" value={checkInDate} onChange={(e) => setCheckInDate(e.target.value)} min={new Date().toISOString().split('T')[0]} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold" />
