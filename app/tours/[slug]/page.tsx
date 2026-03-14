@@ -2012,7 +2012,7 @@ function TourDetailContent() {
     );
   }
 
-   // ✅ Manejar envío de reserva a WhatsApp (Corregido para iOS y Android)
+    // ✅ Manejar envío de reserva a WhatsApp (Corregido para iOS y Android)
   const handleReservation = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -2050,6 +2050,18 @@ ${tour.includes.map((i: string) => `• ${i}`).join('\n')}
     // Abrir en nueva pestaña/ventana
     window.open(url, '_blank', 'noopener,noreferrer');
   };
+
+  // ✅ Abrir lightbox
+  const openLightbox = (index: number) => {
+    setCurrentImageIndex(index);
+    setLightboxOpen(true);
+  };
+
+  // ✅ Preparar fotos para el lightbox
+  const photos = tour.images.map((img: string) => ({
+    src: img,
+    alt: `${tour.name} - Galería`
+  }));
 
   // ✅ Tours relacionados (misma categoría)
   const relatedTours = Object.values(toursData)
