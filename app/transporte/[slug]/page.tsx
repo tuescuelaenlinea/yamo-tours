@@ -1086,14 +1086,16 @@ export default function TransportDetail() {
     );
   }
 
+   // ✅ Manejar envío de cotización a WhatsApp (Corregido para iOS y Android)
   const handleReservation = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const phoneNumber = '573001234567';
+    // ✅ 1. Número limpio sin espacios
+    const phoneNumber = '573013547422'; 
     
     const message = `🚤 *NUEVA COTIZACIÓN - TRANSPORTE* 🚤
 
-📋 *Detalles del Servicio:*
+ *Detalles del Servicio:*
 ━━━━━━━━━━━━━━━━━━━━
 🚢 *Embarcación:* ${service.name}
 📍 *Salida:* ${service.departure}
@@ -1106,7 +1108,10 @@ export default function TransportDetail() {
 
 ✅ Quiero confirmar disponibilidad y recibir cotización completa.`;
 
-    const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+    // ✅ 2. URL Optimizada: Usamos 'wa.me' y eliminamos espacios
+    // Esto asegura que en iPhone se abra directamente la App de WhatsApp
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 

@@ -2012,16 +2012,22 @@ function TourDetailContent() {
     );
   }
 
-  // ✅ Manejar envío de reserva a WhatsApp
+   // ✅ Manejar envío de reserva a WhatsApp (Corregido para iOS y Android)
   const handleReservation = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const phoneNumber = '573001234567'; // ← Cambia por tu número real
-    const total = tour.price * parseInt(passengers);
+    // ✅ 1. Número limpio: Sin espacios, sin símbolos '+', solo código país + número
+    const phoneNumber = '573013547422'; 
     
+    // Calculamos el total (manejamos el caso donde price sea 0 o NaN)
+    const priceNum = tour.price || 0;
+    const passengersNum = parseInt(passengers) || 1;
+    const total = priceNum * passengersNum;
+    
+    // ✅ 2. Mensaje estructurado
     const message = `🌴 *NUEVA RESERVA - YAMID Tours* 🌴
 
-📋 *Detalles de la Reserva:*
+ *Detalles de la Reserva:*
 ━━━━━━━━━━━━━━━━━━━━
 🏝️ *Tour:* ${tour.name}
 📍 *Ubicación:* ${tour.location}
@@ -2037,21 +2043,13 @@ ${tour.includes.map((i: string) => `• ${i}`).join('\n')}
 
 ✅ Quiero confirmar esta reserva. ¿Me indican los pasos para el pago?`;
 
-    const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+    // ✅ 3. URL Optimizada: Usamos 'wa.me' en lugar de 'api.whatsapp.com'
+    // Esto fuerza la apertura de la APP nativa en iOS y Android
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    
+    // Abrir en nueva pestaña/ventana
     window.open(url, '_blank', 'noopener,noreferrer');
   };
-
-  // ✅ Abrir lightbox
-  const openLightbox = (index: number) => {
-    setCurrentImageIndex(index);
-    setLightboxOpen(true);
-  };
-
-  // ✅ Preparar fotos para el lightbox
-  const photos = tour.images.map((img: string) => ({
-    src: img,
-    alt: `${tour.name} - Galería`
-  }));
 
   // ✅ Tours relacionados (misma categoría)
   const relatedTours = Object.values(toursData)

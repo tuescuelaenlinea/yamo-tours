@@ -746,17 +746,26 @@ function AccommodationDetailContent() {
     );
   }
 
+   // ✅ Manejar envío de reserva a WhatsApp (Corregido para iOS y Android)
   const handleReservation = (e: React.FormEvent) => {
     e.preventDefault();
-    const phoneNumber = '573001234567';
+    
+    // ✅ 1. Número limpio sin espacios
+    const phoneNumber = '573013547422'; 
+    
+    // Cálculo de noches (mantenemos tu lógica original)
     const nights = checkInDate && checkOutDate 
       ? Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24))
       : 1;
-    const total = accommodation.price * nights * parseInt(guests);
+    
+    // Cálculo del total (aseguramos que sea un número válido)
+    const priceNum = accommodation.price || 0;
+    const guestsNum = parseInt(guests) || 1;
+    const total = priceNum * nights * guestsNum;
     
     const message = `🏨 *NUEVA RESERVA - HOSPEDAJE* 🏨
 
-📋 *Detalles de la Reserva:*
+ *Detalles de la Reserva:*
 ━━━━━━━━━━━━━━━━━━━━
 🏡 *Propiedad:* ${accommodation.name}
 📍 *Ubicación:* ${accommodation.location}
@@ -770,7 +779,9 @@ function AccommodationDetailContent() {
 
 ✅ Quiero confirmar disponibilidad y proceder con la reserva.`;
 
-    const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+    // ✅ 2. URL Optimizada: Usamos 'wa.me' y eliminamos espacios
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
