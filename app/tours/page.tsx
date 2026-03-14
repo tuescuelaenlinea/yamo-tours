@@ -29,9 +29,19 @@ const tourFilters = [
   
   // === GOLFO DE MORROSQUILLO ===
   { id: 'golfo', name: 'Golfo de Morrosquillo', category: 'cultural', location: 'Golfo de Morrosquillo', icon: '⛵' },
+
+   // === GOLFO DE MORROSQUILLO ===  
+  { id: 'medellin', name: 'Medellín y Guatapé', category: 'medellin', location: 'Antioquia', icon: '🏙️' },
+  
   
   // === CULTURAL ===
-  { id: 'cultural-palenque', name: ' Cultural', category: 'cultural', location: 'San Basilio de Palenque', icon: '🥁' }
+  { id: 'cultural-palenque', name: ' Cultural', category: 'cultural', location: 'San Basilio de Palenque', icon: '🥁' }, 
+
+  { id: 'eje-cafetero', name: 'Eje Cafetero & Navidad', category: 'eje-cafetero', location: 'Armenia, Quindío', icon: '☕' },
+
+  { id: 'sur-colombia', name: 'Sur de Colombia & Ecuador', category: 'sur-colombia', location: 'Nariño, Colombia & Tulcán, Ecuador', icon: '🗻' },
+
+
 ];
 
 // ✅ Base de datos de tours - PARTE 1: ATARDECER CARTAGENA
@@ -378,8 +388,8 @@ const allTours = [
       { time: '9:00 AM', activity: 'Salida de Cartagena' },
       { time: '4:00 PM', activity: 'Regreso a Cartagena' }
     ],
-    images: Array.from({ length: 8 }, (_, i) => `/images/tours/isla-sol/gallery-${i + 1}.jpg`),
-    heroImage: '/images/tours/isla-sol/hero.jpg'
+    images: Array.from({ length: 8 }, (_, i) => `/images/tours/isla-pelicano/gallery-${i + 1}.jpg`),
+    heroImage: '/images/tours/isla-pelicano/hero.jpg'
   },
   {
     slug: 'paue-beach-lounge',
@@ -1852,6 +1862,185 @@ const allTours = [
     images: Array.from({ length: 5 }, (_, i) => `/images/tours/mukura/gallery-${i + 1}.jpg`),
     heroImage: '/images/tours/mukura/hero.jpg'
   },
+  // === MEDELLÍN - NUEVOS TOURS ===
+{
+  slug: 'city-tour-medellin',
+  name: 'City Tour Medellín + Graffiti Comuna 13',
+  category: 'medellin', // Nueva categoría
+  location: 'Antioquia',
+  description: 'Recorre lo mejor de Medellín: desde el Pueblito Paisa hasta la transformación social de la Comuna 13. Incluye transporte, guía local experto en graffiti y almuerzo típico.',
+  duration: '8h',
+  price: 0, // ⚠️ Definir precio base (ej: 150000)
+  priceText: 'Consultar Precio',
+  rating: 5.0,
+  reviews: 0,
+  image: '/images/tours/medellin/m1.jpg',
+  emoji: '🎨',
+  includes: [
+    'Traslados desde puntos estratégicos (Metro Poblado, Parque El Poblado, Estación Floresta, Estadio, Hotel 47)',
+    'Transporte en vehículo de turismo (salida compartida)',
+    'Guía de turismo acompañante',
+    'Guía 100% local en recorrido por Comuna 13',
+    'Almuerzo típico de la región',
+    'Visita al Pueblito Paisa',
+    'Parque de los Pies Descalzos',
+    'Parque de las Esculturas de Botero',
+    'Parques del Río',
+    'Experiencia en Metro y Metrocable',
+    'Recorrido por escaleras eléctricas al aire libre (Comuna 13)',
+    'Tour de murales y graffitis al aire libre',
+    'Tarjeta de asistencia médica'
+  ],
+  excludes: [
+    'Gastos personales no especificados',
+    'Niños menores de 2 años: Solo pagan seguro ($55.000)',
+    'Niños de 2 a 9 años: 90% del valor del plan',
+    'Nota: Adultos con menores deben presentar registro civil o permiso notariado'
+  ],
+  itinerary: [
+    { time: '07:50 AM', activity: 'Punto de encuentro: Estación Poblado' },
+    { time: '08:10 AM', activity: 'Punto de encuentro: Parque El Poblado' },
+    { time: '08:20 AM', activity: 'Punto de encuentro: Estación Floresta' },
+    { time: '08:50 AM', activity: 'Punto de encuentro: Estación Estadio / Hotel 47' },
+    { time: '09:30 AM', activity: 'Inicio del City Tour (Pueblito Paisa, Botero, Pies Descalzos)' },
+    { time: '12:30 PM', activity: 'Almuerzo típico' },
+    { time: '02:00 PM', activity: 'Traslado a Comuna 13 (Metrocable y Escaleras)' },
+    { time: '05:00 PM', activity: 'Retorno a puntos de origen' }
+  ],
+  images: Array.from({ length: 6 }, (_, i) => `/images/tours/medellin/m${i + 1}.jpg`),
+  heroImage: '/images/tours/medellin/m1.jpg'
+},
+{
+  slug: 'tour-penol-guatape',
+  name: 'Tour Peñol y Guatapé: La Piedra y los Zócalos',
+  category: 'medellin',
+  location: 'Antioquia',
+  description: 'Descubre la belleza de la represa y el pueblo más colorido de Colombia. Navegación por la represa, visita al Nuevo Peñol y recorrido por los zócalos de Guatapé.',
+  duration: '10h',
+  price: 0, // ⚠️ Definir precio base (ej: 180000)
+  priceText: 'Consultar Precio',
+  rating: 5.0,
+  reviews: 0,
+  image: '/images/tours/medellin/3.jpg',
+  emoji: '🗿',
+  includes: [
+    'Traslados desde puntos estratégicos (Estación Estadio 6:10 AM, Parque Poblado 7:00 AM)',
+    'Transporte en vehículo de turismo (salida compartida)',
+    'Guía acompañante o guía conductor',
+    'Almuerzo típico de la región',
+    'Visita a los municipios del Nuevo Peñol y Guatapé',
+    'Recorrido por la represa en embarcación',
+    'Visita externa a la Piedra del Peñol (Ascenso no incluido)',
+    'Recorrido por calles pintorescas y Malecón de Guatapé',
+    'Observación de zócalos en fachadas',
+    'Visita a tiendas artesanales (Plazoleta de los Zócalos)',
+    'Ambiente familiar',
+    'Tarjeta de asistencia médica'
+  ],
+  excludes: [
+    'Ascenso a la Piedra del Peñol (se paga en destino)',
+    'Gastos personales no especificados',
+    'Niños menores de 2 años: Solo pagan seguro ($55.000)',
+    'Niños de 2 a 9 años: 90% del valor del plan',
+    'Nota: Documentación obligatoria para menores viajando con adultos'
+  ],
+  itinerary: [
+    { time: '06:10 AM', activity: 'Punto de encuentro: Estación Estadio del Metro' },
+    { time: '07:00 AM', activity: 'Punto de encuentro: Parque del Poblado' },
+    { time: '09:30 AM', activity: 'Llegada a Guatapé y recorrido por el Malecón' },
+    { time: '11:00 AM', activity: 'Navegación por la represa' },
+    { time: '01:00 PM', activity: 'Almuerzo típico' },
+    { time: '02:30 PM', activity: 'Visita al Nuevo Peñol y vista externa de la Piedra' },
+    { time: '04:00 PM', activity: 'Tiempo libre en Plazoleta de los Zócalos' },
+    { time: '05:30 PM', activity: 'Retorno a Medellín' }
+  ],
+  images: Array.from({ length: 3 }, (_, i) => `/images/tours/medellin/${i + 1}.jpg`),
+  heroImage: '/images/tours/medellin/3.jpg'
+}, 
+// === EJE CAFETERO - NAVIDAD ===
+{
+  slug: 'navidad-eje-cafetero-4d',
+  name: 'Navidad Eje Cafetero 4 Días ☕',
+  category: 'eje-cafetero', // Nueva categoría
+  location: 'Armenia, Quindío',
+  description: 'Vive la magia de la Navidad en el Eje Cafetero. Un recorrido completo de 4 días incluyendo Parque del Café, Panaca, Salento, Termales y más. ¡Opciones intercambiables!',
+  duration: '4 Días / 3 Noches',
+  price: 0, // ⚠️ Definir precio (ej: 1850000)
+  priceText: 'Consultar Precio Navidad',
+  rating: 5.0,
+  reviews: 0,
+  image: '/images/tours/medellin/nec1.jpg',
+  emoji: '🎄',
+  includes: [
+    'Ingreso al Parque del Café con pasaporte múltiple',
+    'Ingreso a Panaca (O intercambiable)',
+    'Visita a Salento y Valle del Cocora',
+    'Ingreso a Termales de Santa Rosa de Cabal',
+    'Ingreso a Filandia y su mirador Encanto',
+    'Tour panorámico por Armenia y Pereira',
+    'Alojamiento 3 noches (según plan seleccionado)',
+    'Alimentación según plan (Desayunos/Almuerzos/Cenas)',
+    'Transporte terrestre climatizado',
+    'Guía turístico bilingüe/español'
+  ],
+  excludes: [
+    'Gastos personales (bebidas, souvenirs, etc.)',
+    'Propinas al guía o conductor',
+    'Actividades no especificadas en el itinerario',
+    'Seguro de viaje (recomendado)'
+  ],
+  itinerary: [
+    { time: 'Día 1', activity: 'Recogida y traslado al Eje Cafetero. Tour panorámico Armenia/Pereira. Check-in hotel.' },
+    { time: 'Día 2', activity: 'Parque del Café (Pasaporte Múltiple) o Panaca. Tarde libre.' },
+    { time: 'Día 3', activity: 'Salento y Valle del Cocora. Tarde: Termales de Santa Rosa de Cabal.' },
+    { time: 'Día 4', activity: 'Mañana: Filandia (Mirador Encanto). Almuerzo de despedida y retorno.' }
+  ],
+  images: Array.from({ length: 2 }, (_, i) => `/images/tours/medellin/nec${i + 1}.jpg`),
+  heroImage: '/images/tours/medellin/nec1.jpg'
+},
+// === SUR DE COLOMBIA Y ECUADOR ===
+{
+  slug: 'sur-colombia-tulcan-ecuador',
+  name: 'Sur de Colombia y Tulcán Ecuador 🇨🇴🇪🇨',
+  category: 'sur-colombia', // Nueva categoría
+  location: 'Nariño, Colombia & Tulcán, Ecuador',
+  description: 'Increíble recorrido de 5 días por el sur de Colombia y Ecuador. Visita Cali, Pasto, el Santuario de Las Lajas, el Cementerio de Tulcán y la Laguna de Cocha.',
+  duration: '5 Días / 4 Noches',
+  price: 0, // ⚠️ Definir precio (ej: 2100000)
+  priceText: 'Consultar Precio',
+  rating: 5.0,
+  reviews: 0,
+  image: '/images/tours/medellin/sc1.jpg',
+  emoji: '🗻',
+  includes: [
+    'Traslados desde Medellín o destino a todos los sitios de interés',
+    'Alojamiento: 1 Noche en Cali, 3 Noches en Pasto, 1 Noche en Popayán',
+    'Alimentación PAM: Desayunos y Cenas por noche de alojamiento (5 Desayunos y 5 Cenas)',
+    'Guía acompañante durante todo el recorrido',
+    'Tours y recorridos a sitios de interés',
+    'Tarjeta de asistencia médica',
+    'Visita al Santuario de Las Lajas',
+    'Recorrido por Tulcán, Ecuador (Cementerio de Topiarios)',
+    'Paseo en lancha por la Laguna de Cocha',
+    'City Tour por Cali'
+  ],
+  excludes: [
+    'Almuerzos no especificados',
+    'Gastos personales (bebidas, souvenirs, etc.)',
+    'Propinas al guía o conductor',
+    'Actividades opcionales no mencionadas en el itinerario',
+    'Documentación para cruce fronterizo (Pasaporte/Cédula según normativa vigente)'
+  ],
+  itinerary: [
+    { time: 'Día 1', activity: 'Salida hacia Cali. City Tour y alojamiento.' },
+    { time: 'Día 2', activity: 'Traslado a Pasto. Recorrido urbano y alojamiento.' },
+    { time: 'Día 3', activity: 'Excursión a Tulcán (Ecuador): Cementerio de Topiarios. Retorno a Pasto.' },
+    { time: 'Día 4', activity: 'Mañana: Santuario de Las Lajas. Tarde: Laguna de Cocha (paseo en lancha). Traslado a Popayán.' },
+    { time: 'Día 5', activity: 'City Tour Popayán y retorno a ciudad de origen.' }
+  ],
+  images: Array.from({ length: 2 }, (_, i) => `/images/tours/medellin/sc${i + 1}.jpg`),
+  heroImage: '/images/tours/medellin/sc1.jpg'
+}
 
   // === CONTINÚA EN PARTE 5 ===
 ];

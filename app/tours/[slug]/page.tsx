@@ -1801,7 +1801,182 @@ const toursData: Record<string, any> = {
     ],
     images: Array.from({ length: 5 }, (_, i) => `/images/tours/mukura/gallery-${i + 1}.jpg`),
     heroImage: '/images/tours/mukura/hero.jpg'
-  }
+  },
+   // === MEDELLÍN - NUEVOS TOURS (Detalle) ===
+'city-tour-medellin': {
+  slug: 'city-tour-medellin',
+  name: 'City Tour Medellín + Graffiti Comuna 13',
+  category: 'medellin',
+  location: 'Antioquia',
+  description: 'Recorre lo mejor de Medellín: desde el Pueblito Paisa hasta la transformación social de la Comuna 13. Incluye transporte, guía local experto en graffiti y almuerzo típico.',
+  duration: '8h',
+  price: 0, // ⚠️ Definir precio numérico real aquí
+  priceText: 'Consultar Precio',
+  rating: 5.0,
+  reviews: 0,
+  emoji: '🎨',
+  includes: [
+    'Traslados desde puntos estratégicos (Metro Poblado, Parque El Poblado, Estación Floresta, Estadio, Hotel 47)',
+    'Transporte en vehículo de turismo (salida compartida)',
+    'Guía de turismo acompañante',
+    'Guía 100% local en recorrido por Comuna 13',
+    'Almuerzo típico de la región',
+    'Visita al Pueblito Paisa',
+    'Parque de los Pies Descalzos',
+    'Parque de las Esculturas de Botero',
+    'Parques del Río',
+    'Experiencia en Metro y Metrocable',
+    'Recorrido por escaleras eléctricas al aire libre (Comuna 13)',
+    'Tour de murales y graffitis al aire libre',
+    'Tarjeta de asistencia médica'
+  ],
+  excludes: [
+    'Gastos personales no especificados',
+    'Niños menores de 2 años: Solo pagan seguro ($55.000)',
+    'Niños de 2 a 9 años: 90% del valor del plan',
+    'Nota: Adultos con menores deben presentar registro civil o permiso notariado'
+  ],
+  itinerary: [
+    { time: '07:50 AM', activity: 'Punto de encuentro: Estación Poblado' },
+    { time: '08:10 AM', activity: 'Punto de encuentro: Parque El Poblado' },
+    { time: '08:20 AM', activity: 'Punto de encuentro: Estación Floresta' },
+    { time: '08:50 AM', activity: 'Punto de encuentro: Estación Estadio / Hotel 47' },
+    { time: '09:30 AM', activity: 'Inicio del City Tour (Pueblito Paisa, Botero, Pies Descalzos)' },
+    { time: '12:30 PM', activity: 'Almuerzo típico' },
+    { time: '02:00 PM', activity: 'Traslado a Comuna 13 (Metrocable y Escaleras)' },
+    { time: '05:00 PM', activity: 'Retorno a puntos de origen' }
+  ],
+  images: Array.from({ length: 3 }, (_, i) => `/images/tours/medellin/m${i + 1}.jpg`),
+  heroImage: '/images/tours/medellin/m1.jpg'
+},
+'tour-penol-guatape': {
+  slug: 'tour-penol-guatape',
+  name: 'Tour Peñol y Guatapé: La Piedra y los Zócalos',
+  category: 'medellin',
+  location: 'Antioquia',
+  description: 'Descubre la belleza de la represa y el pueblo más colorido de Colombia. Navegación por la represa, visita al Nuevo Peñol y recorrido por los zócalos de Guatapé.',
+  duration: '10h',
+  price: 0, // ⚠️ Definir precio numérico real aquí
+  priceText: 'Consultar Precio',
+  rating: 5.0,
+  reviews: 0,
+  emoji: '🗿',
+  includes: [
+    'Traslados desde puntos estratégicos (Estación Estadio 6:10 AM, Parque Poblado 7:00 AM)',
+    'Transporte en vehículo de turismo (salida compartida)',
+    'Guía acompañante o guía conductor',
+    'Almuerzo típico de la región',
+    'Visita a los municipios del Nuevo Peñol y Guatapé',
+    'Recorrido por la represa en embarcación',
+    'Visita externa a la Piedra del Peñol (Ascenso no incluido)',
+    'Recorrido por calles pintorescas y Malecón de Guatapé',
+    'Observación de zócalos en fachadas',
+    'Visita a tiendas artesanales (Plazoleta de los Zócalos)',
+    'Ambiente familiar',
+    'Tarjeta de asistencia médica'
+  ],
+  excludes: [
+    'Ascenso a la Piedra del Peñol (se paga en destino)',
+    'Gastos personales no especificados',
+    'Niños menores de 2 años: Solo pagan seguro ($55.000)',
+    'Niños de 2 a 9 años: 90% del valor del plan',
+    'Nota: Documentación obligatoria para menores viajando con adultos'
+  ],
+  itinerary: [
+    { time: '06:10 AM', activity: 'Punto de encuentro: Estación Estadio del Metro' },
+    { time: '07:00 AM', activity: 'Punto de encuentro: Parque del Poblado' },
+    { time: '09:30 AM', activity: 'Llegada a Guatapé y recorrido por el Malecón' },
+    { time: '11:00 AM', activity: 'Navegación por la represa' },
+    { time: '01:00 PM', activity: 'Almuerzo típico' },
+    { time: '02:30 PM', activity: 'Visita al Nuevo Peñol y vista externa de la Piedra' },
+    { time: '04:00 PM', activity: 'Tiempo libre en Plazoleta de los Zócalos' },
+    { time: '05:30 PM', activity: 'Retorno a Medellín' }
+  ],
+  images: Array.from({ length: 3 }, (_, i) => `/images/tours/medellin/${i + 1}.jpg`),
+  heroImage: '/images/tours/medellin/3.jpg'
+},
+// === EJE CAFETERO - NAVIDAD (Detalle) ===
+'navidad-eje-cafetero-4d': {
+  slug: 'navidad-eje-cafetero-4d',
+  name: 'Navidad Eje Cafetero 4 Días ☕',
+  category: 'eje-cafetero',
+  location: 'Armenia, Quindío',
+  description: 'Vive la magia de la Navidad en el Eje Cafetero. Un recorrido completo de 4 días incluyendo Parque del Café, Panaca, Salento, Termales y más. ¡Podrás cambiar Panaca por otras experiencias como Ukumarí, Montaña Mágica o Buga!',
+  duration: '4 Días / 3 Noches',
+  price: 0, // ⚠️ Definir precio numérico real aquí
+  priceText: 'Consultar Precio Navidad',
+  rating: 5.0,
+  reviews: 0,
+  emoji: '🎄',
+  includes: [
+    'Ingreso al Parque del Café con pasaporte múltiple',
+    'Ingreso a Panaca (O intercambiable por Ukumarí, Montaña Mágica, etc.)',
+    'Visita a Salento y Valle del Cocora',
+    'Ingreso a Termales de Santa Rosa de Cabal',
+    'Ingreso a Filandia y su mirador Encanto',
+    'Tour panorámico por la Ciudad de Armenia y Pereira',
+    'Alojamiento 3 noches',
+    'Alimentación según plan seleccionado',
+    'Transporte terrestre climatizado',
+    'Guía turístico acompañante'
+  ],
+  excludes: [
+    'Gastos personales no especificados',
+    'Propinas',
+    'Bebidas alcohólicas',
+    'Seguro de viaje'
+  ],
+  itinerary: [
+    { time: 'Día 1', activity: 'Recogida y traslado al Eje Cafetero. Tour panorámico Armenia/Pereira. Check-in hotel.' },
+    { time: 'Día 2', activity: 'Parque del Café (Pasaporte Múltiple) o Panaca. Tarde libre.' },
+    { time: 'Día 3', activity: 'Salento y Valle del Cocora. Tarde: Termales de Santa Rosa de Cabal.' },
+    { time: 'Día 4', activity: 'Mañana: Filandia (Mirador Encanto). Almuerzo de despedida y retorno.' }
+  ],
+  images: Array.from({ length: 2 }, (_, i) => `/images/tours/medellin/nec${i + 1}.jpg`),
+  heroImage: '/images/tours/medellin/nec1.jpg'
+},
+// === SUR DE COLOMBIA Y ECUADOR (Detalle) ===
+'sur-colombia-tulcan-ecuador': {
+  slug: 'sur-colombia-tulcan-ecuador',
+  name: 'Sur de Colombia y Tulcán Ecuador 🇨🇴🇪🇨',
+  category: 'sur-colombia',
+  location: 'Nariño, Colombia & Tulcán, Ecuador',
+  description: 'Vive una experiencia única cruzando la frontera. lo mejor del sur colombiano: la majestuosidad de Las Lajas, la cultura de Pasto y Popayán, y la curiosidad artística del Cementerio de Tulcán en Ecuador. ¡Todo incluido con guía y alimentación!',
+  duration: 'Por definir',
+  price: 0, // ⚠️ Definir precio numérico real aquí
+  priceText: 'Consultar Precio',
+  rating: 5.0,
+  reviews: 0,
+  emoji: '🗻',
+  includes: [
+    'Traslados desde Medellín o destino a todos los sitios de interés',
+    'Alojamiento: 1 Noche en Cali, 3 Noches en Pasto, 1 Noche en Popayán',
+    'Alimentación PAM: Desayunos y Cenas por noche de alojamiento (5 Desayunos y 5 Cenas)',
+    'Guía acompañante durante todo el recorrido',
+    'Tours y recorridos a sitios de interés',
+    'Tarjeta de asistencia médica',
+    'Visita al Santuario de Las Lajas',
+    'Recorrido por Tulcán, Ecuador (Cementerio de Topiarios)',
+    'Paseo en lancha por la Laguna de Cocha',
+    'City Tour por Cali'
+  ],
+  excludes: [
+    'Almuerzos no especificados',
+    'Gastos personales',
+    'Propinas',
+    'Documentación para cruce fronterizo (Verificar requisitos actuales)'
+  ],
+  itinerary: [
+    { time: 'exc 1', activity: 'Cali. City Tour y alojamiento.' },
+    { time: 'exc 2', activity: 'Pasto. Recorrido urbano y alojamiento.' },
+    { time: 'exc 3', activity: 'Excursión a Tulcán (Ecuador): Cementerio de Topiarios.' },
+    { time: 'exc 4', activity: 'Santuario de Las Lajas.' },
+    { time: 'exc 5', activity: 'City Tour Popayán.' },
+    { time: 'exc 6', activity: 'Laguna de Cocha (paseo en lancha).' }
+  ],
+  images: Array.from({ length: 2 }, (_, i) => `/images/tours/medellin/sc${i + 1}.jpg`),
+  heroImage: '/images/tours/medellin/sc1.jpg'
+},
 };
 
   // ✅ Componente interno que usa useSearchParams
