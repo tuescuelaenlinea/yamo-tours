@@ -719,7 +719,6 @@ const accommodationsData: Record<string, any> = {
   }
 };
 
-// ✅ Componente interno que usa useSearchParams
 function AccommodationDetailContent() {
   const params = useParams();
   const searchParams = useSearchParams();
@@ -728,13 +727,16 @@ function AccommodationDetailContent() {
 
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // Estados del formulario
   const [checkInDate, setCheckInDate] = useState(() => searchParams.get('checkin') || '');
   const [checkOutDate, setCheckOutDate] = useState(() => searchParams.get('checkout') || '');
-  const [guests, setGuests] = useState('2');
-
-  // ✅ NUEVOS ESTADOS: Nombre y Email
+  const [guests, setGuests] = useState(() => searchParams.get('guests') || '2');
+  
+  // ✅ NUEVOS ESTADOS
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('efectivo');
 
   if (!accommodation) {
     return (
@@ -750,36 +752,45 @@ function AccommodationDetailContent() {
     );
   }
 
-   // ✅ Manejar envío de reserva a WhatsApp (Corregido para iOS y Android)
+  // ✅ CÁLCULO DINÁMICO DEL TOTAL
+  const nights = checkInDate && checkOutDate 
+    ? Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24))
+    : 1;
+  
+  const priceNum = accommodation.price || 0;
+  const guestsNum = parseInt(guests) || 1;
+  const baseTotal = priceNum * nights * guestsNum;
+  
+  let finalTotal = baseTotal;
+  let extraNote = '';
+
+  if (paymentMethod === 'tarjeta') {
+    finalTotal = Math.round(baseTotal * 1.05); // +5%
+    extraNote = 'Incluye 5% por procesamiento con tarjeta.';
+  } else if (paymentMethod === 'transferencia') {
+    extraNote = 'Sin costos adicionales.';
+  } else {
+    extraNote = 'Pago en efectivo el día del check-in.';
+  }
+
+  // ✅ Manejar envío de reserva a WhatsApp
   const handleReservation = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validación simple
+
     if (!customerName.trim()) {
       alert('Por favor, escribe tu nombre completo para continuar.');
       return;
     }
 
-    // ✅ 1. Número limpio sin espacios
-    const phoneNumber = '573013547422'; 
-    
-    // Cálculo de noches (mantenemos tu lógica original)
-    const nights = checkInDate && checkOutDate 
-      ? Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24))
-      : 1;
-    
-    // Cálculo del total (aseguramos que sea un número válido)
-    const priceNum = accommodation.price || 0;
-    const guestsNum = parseInt(guests) || 1;
-    const total = priceNum * nights * guestsNum;
+    const phoneNumber = '573013547422';
     
     const message = `🏨 *NUEVA RESERVA - HOSPEDAJE* 🏨
 
-*Datos del Cliente:*
+ *Datos del Cliente:*
 👤 *Nombre:* ${customerName}
 📧 *Email:* ${customerEmail || 'No especificado'}
+💳 *Pago Preferido:* ${paymentMethod.toUpperCase()}
 ━━━━━━━━━━━━━━━━━━━━
-
  *Detalles de la Reserva:*
 ━━━━━━━━━━━━━━━━━━━━
 🏡 *Propiedad:* ${accommodation.name}
@@ -788,15 +799,14 @@ function AccommodationDetailContent() {
 📅 *Check-out:* ${checkOutDate || 'Por definir'}
 🌙 *Noches:* ${nights}
 👥 *Huéspedes:* ${guests}
-💰 *Precio por noche:* ${accommodation.priceText}
-💵 *Total estimado:* $${total.toLocaleString()} COP
+💰 *Precio base p/noche:* ${accommodation.priceText}
+💵 *TOTAL A PAGAR:* $${finalTotal.toLocaleString()} COP
+${paymentMethod === 'tarjeta' && baseTotal > 0 ? '⚠️ (Incluye recargo 5% tarjeta)' : ''}
 ━━━━━━━━━━━━━━━━━━━━
 
 ✅ Quiero confirmar disponibilidad y proceder con la reserva.`;
 
-    // ✅ 2. URL Optimizada: Usamos 'wa.me' y eliminamos espacios
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
@@ -912,7 +922,7 @@ function AccommodationDetailContent() {
                     <div key={index} className={`flex items-center gap-3 p-3 rounded-lg ${amenity.included ? 'bg-green-50' : 'bg-gray-50'}`}>
                       {amenity.included ? <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" /> : <XCircle className="w-5 h-5 text-gray-400 flex-shrink-0" />}
                       <div className="flex items-center gap-2">
-                        {Icon && <Icon className="w-4 h-4 text-yamid-gold" />}
+                        {Icon && typeof Icon === 'function' && <Icon className="w-4 h-4 text-yamid-gold" />}
                         <span className={amenity.included ? 'text-gray-700' : 'text-gray-400'}>{amenity.name}</span>
                       </div>
                     </div>
@@ -951,13 +961,20 @@ function AccommodationDetailContent() {
 
           {/* Columna Derecha - Formulario */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
-              <div className="mb-6">
-                <p className="text-gray-500 text-sm">Precio desde</p>
-                <p className="text-3xl font-bold text-yamid-palm">{accommodation.priceText}</p>
+            <div className="bg-white rounded-lg shadow-md p-6 sticky top-24 border-t-4 border-yamid-gold">
+              
+              {/* Precio Base (Pequeño, arriba) */}
+              <div className="mb-6 text-center">
+                <p className="text-gray-500 text-sm">Precio base por noche</p>
+                <p className="text-xl font-semibold text-gray-700">{accommodation.priceText}</p>
+                {accommodation.price > 0 && (
+                  <p className="text-xs text-gray-500 mt-1">* Varía según noches, huéspedes y método de pago</p>
+                )}
               </div>
-              <form onSubmit={handleReservation} className="space-y-4">
-                 {/* ✅ NUEVO CAMPO: Nombre Completo */}
+
+              <form onSubmit={handleReservation} className="space-y-5">
+                
+                {/* Campos Personales */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-2">Nombre Completo *</label>
                   <input 
@@ -969,7 +986,7 @@ function AccommodationDetailContent() {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
                   />
                 </div>
-                {/* ✅ NUEVO CAMPO: Email */}
+
                 <div>
                   <label className="block text-gray-700 font-medium mb-2">Correo Electrónico</label>
                   <input 
@@ -980,29 +997,91 @@ function AccommodationDetailContent() {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
                   />
                 </div>
-                <div>
-                  <label className="block text-gray-700 font-medium mb-2">Check-in</label>
-                  <input type="date" value={checkInDate} onChange={(e) => setCheckInDate(e.target.value)} min={new Date().toISOString().split('T')[0]} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold" />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-2">Check-in</label>
+                    <input 
+                      type="date" 
+                      value={checkInDate}
+                      onChange={(e) => setCheckInDate(e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
+                      className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-2">Check-out</label>
+                    <input 
+                      type="date" 
+                      value={checkOutDate}
+                      onChange={(e) => setCheckOutDate(e.target.value)}
+                      min={checkInDate || new Date().toISOString().split('T')[0]}
+                      className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold text-sm"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-gray-700 font-medium mb-2">Check-out</label>
-                  <input type="date" value={checkOutDate} onChange={(e) => setCheckOutDate(e.target.value)} min={checkInDate || new Date().toISOString().split('T')[0]} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold" />
-                </div>
+
                 <div>
                   <label className="block text-gray-700 font-medium mb-2">Huéspedes</label>
-                  <select value={guests} onChange={(e) => setGuests(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold">
+                  <select 
+                    value={guests}
+                    onChange={(e) => setGuests(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold"
+                  >
                     {Array.from({ length: accommodation.capacity }, (_, i) => (
                       <option key={i + 1} value={i + 1}>{i + 1} {i === 0 ? 'Huésped' : 'Huéspedes'}</option>
                     ))}
                   </select>
                 </div>
-                <button type="submit" className="w-full bg-yamid-gold hover:bg-yamid-goldDark text-white py-4 rounded-lg font-bold text-lg transition-colors flex items-center justify-center space-x-2">
+
+                {/* ✅ SECCIÓN DESTACADA: TOTAL + MÉTODO DE PAGO */}
+                <div className="bg-yamid-sand/30 p-4 rounded-lg border border-yamid-gold/30 mt-6">
+                  <div className="flex justify-between items-end mb-3">
+                    <span className="text-gray-700 font-medium">Total Estimado:</span>
+                    <div className="text-right">
+                      <span className="block text-3xl font-bold text-yamid-palm">
+                        ${finalTotal.toLocaleString()} COP
+                      </span>
+                      <span className="text-xs text-gray-500 block h-4">
+                        {extraNote}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm font-bold text-gray-800">Método de Pago:</label>
+                    <select 
+                      value={paymentMethod}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold font-medium cursor-pointer shadow-sm"
+                    >
+                      <option value="efectivo">💵 Efectivo (Sin recargo)</option>
+                      <option value="transferencia">🏦 Transferencia (Sin recargo)</option>
+                      <option value="tarjeta">💳 Tarjeta de Crédito (+5%)</option>
+                    </select>
+                    
+                    {/* Alerta Visual Dinámica */}
+                    {paymentMethod === 'tarjeta' && (
+                      <div className="mt-2 flex items-start gap-2 text-xs text-yellow-800 bg-yellow-100 p-2 rounded border border-yellow-200">
+                        <span className="font-bold">⚠️ Nota:</span>
+                        El valor total ya incluye el 5% adicional por comisiones bancarias.
+                      </div>
+                    )}
+                  </div>
+                </div>
+                {/* ✅ FIN SECCIÓN DESTACADA */}
+
+                <button 
+                  type="submit" 
+                  className="w-full bg-yamid-gold hover:bg-yamid-goldDark text-white py-4 rounded-lg font-bold text-lg transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
+                >
                   <MessageCircle className="w-5 h-5" />
                   <span>Consultar Disponibilidad</span>
                 </button>
               </form>
-              <div className="mt-6 pt-6 border-t border-gray-200 text-sm text-gray-600">
-                <p>💬 Serás redirigido a WhatsApp para confirmar tu reserva</p>
+
+              <div className="mt-6 pt-6 border-t border-gray-200 text-xs text-gray-500 text-center">
+                🔒 Tus datos están seguros. Serás redirigido a WhatsApp.
               </div>
             </div>
           </div>
@@ -1036,7 +1115,6 @@ function AccommodationDetailContent() {
   );
 }
 
-// ✅ Componente principal que envuelve en Suspense
 export default function AccommodationDetail() {
   return (
     <Suspense fallback={

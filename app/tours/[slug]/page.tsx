@@ -1992,6 +1992,7 @@ function TourDetailContent() {
   const [passengers, setPassengers] = useState(() => searchParams.get('personas') || '2');
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('efectivo'); 
 
   // Si no se encuentra el tour
   if (!tour) {
@@ -2014,54 +2015,54 @@ function TourDetailContent() {
     );
   }
 
+// ✅ CÁLCULO DINÁMICO DEL TOTAL (Se ejecuta en cada render)
+  const priceNum = tour.price || 0;
+  const passengersNum = parseInt(passengers) || 1;
+  const baseTotal = priceNum * passengersNum;
+  
+  let finalTotal = baseTotal;
+  let extraNote = '';
+
+  if (paymentMethod === 'tarjeta') {
+    finalTotal = Math.round(baseTotal * 1.05); // +5%
+    extraNote = 'Incluye 5% por procesamiento con tarjeta.';
+  } else if (paymentMethod === 'transferencia') {
+    extraNote = 'Sin costos adicionales.';
+  } else {
+    extraNote = 'Pago en efectivo el día del tour.';
+  }
+
+
+
     // ✅ Manejar envío de reserva a WhatsApp (Corregido para iOS y Android)
-  const handleReservation = (e: React.FormEvent) => {
+    const handleReservation = (e: React.FormEvent) => {
     e.preventDefault();
-     // ✅ Validación simple: El nombre es obligatorio
     if (!customerName.trim()) {
-      alert('Por favor, escribe tu nombre completo para continuar.');
+      alert('Por favor, escribe tu nombre completo.');
       return;
     }
+
+    const phoneNumber = '573013547422';
     
-    // ✅ 1. Número limpio: Sin espacios, sin símbolos '+', solo código país + número
-    const phoneNumber = '573013547422'; 
-    
-    // Calculamos el total (manejamos el caso donde price sea 0 o NaN)
-    const priceNum = tour.price || 0;
-    const passengersNum = parseInt(passengers) || 1;
-    const total = priceNum * passengersNum;
-    
-    // ✅ 2. Mensaje estructurado
     const message = `🌴 *NUEVA RESERVA - YAMO TOURS* 🌴
 
 *Datos del Cliente:*
 👤 *Nombre:* ${customerName}
 📧 *Email:* ${customerEmail || 'No especificado'}
+💳 *Pago:* ${paymentMethod.toUpperCase()}
 ━━━━━━━━━━━━━━━━━━━━
- *Detalles de la Reserva:*
-━━━━━━━━━━━━━━━━━━━━
+*Detalles:*
 🏝️ *Tour:* ${tour.name}
-📍 *Ubicación:* ${tour.location}
 📅 *Fecha:* ${tourDate || 'Por definir'}
 👥 *Personas:* ${passengers}
-💰 *Precio por persona:* ${tour.priceText}
-💵 *Total estimado:* $${total.toLocaleString()} COP
+💵 *TOTAL A PAGAR:* $${finalTotal.toLocaleString()} COP
+${paymentMethod === 'tarjeta' ? '⚠️ (Incluye recargo 5% tarjeta)' : ''}
 ━━━━━━━━━━━━━━━━━━━━
+✅ Quiero confirmar esta reserva.`;
 
-📝 *Incluye:*
-${tour.includes.map((i: string) => `• ${i}`).join('\n')}
-━━━━━━━━━━━━━━━━━━━━
-
-✅ Quiero confirmar esta reserva. ¿Me indican los pasos para el pago?`;
-
-    // ✅ 3. URL Optimizada: Usamos 'wa.me' en lugar de 'api.whatsapp.com'
-    // Esto fuerza la apertura de la APP nativa en iOS y Android
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    
-    // Abrir en nueva pestaña/ventana
     window.open(url, '_blank', 'noopener,noreferrer');
   };
-
   // ✅ Abrir lightbox
   const openLightbox = (index: number) => {
     setCurrentImageIndex(index);
@@ -2244,15 +2245,19 @@ ${tour.includes.map((i: string) => `• ${i}`).join('\n')}
           </div>
 
           {/* Columna Derecha - Formulario de Reserva */}
+                    {/* Columna Derecha - Formulario */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
-              <div className="mb-6">
-                <p className="text-gray-500 text-sm">Precio por persona</p>
-                <p className="text-3xl font-bold text-yamid-palm">{tour.priceText}</p>
+            <div className="bg-white rounded-lg shadow-md p-6 sticky top-24 border-t-4 border-yamid-gold">
+              
+              {/* Precio Base (Pequeño, arriba) */}
+              <div className="mb-6 text-center">
+                <p className="text-gray-500 text-sm">Precio base por persona - Efectivo</p>
+                <p className="text-xl font-semibold text-gray-700">{tour.priceText}</p>
               </div>
 
-              <form onSubmit={handleReservation} className="space-y-4">
-                {/* ✅ NUEVO CAMPO: Nombre Completo */}
+              <form onSubmit={handleReservation} className="space-y-5">
+                
+                {/* Campos Personales */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-2">Nombre Completo *</label>
                   <input 
@@ -2265,7 +2270,6 @@ ${tour.includes.map((i: string) => `• ${i}`).join('\n')}
                   />
                 </div>
 
-                {/* ✅ NUEVO CAMPO: Email */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-2">Correo Electrónico</label>
                   <input 
@@ -2276,62 +2280,92 @@ ${tour.includes.map((i: string) => `• ${i}`).join('\n')}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
                   />
                 </div>
-                <div>
-                  <label className="block text-gray-700 font-medium mb-2">Fecha del tour</label>
-                  <input 
-                    type="date" 
-                    value={tourDate}
-                    onChange={(e) => setTourDate(e.target.value)}
-                    min={new Date().toISOString().split('T')[0]}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold"
-                  />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-2">Fecha</label>
+                    <input 
+                      type="date" 
+                      value={tourDate}
+                      onChange={(e) => setTourDate(e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
+                      className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-2">Personas</label>
+                    <select 
+                      value={passengers}
+                      onChange={(e) => setPassengers(e.target.value)}
+                      className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold text-sm"
+                    >
+                      {[1,2,3,4,5,6].map(n => <option key={n} value={n}>{n} {n===1?'Persona':'Personas'}</option>)}
+                      <option value="7+">7+ Personas</option>
+                    </select>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-gray-700 font-medium mb-2">Personas</label>
-                  <select 
-                    value={passengers}
-                    onChange={(e) => setPassengers(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold"
-                  >
-                    <option value="1">1 Persona</option>
-                    <option value="2">2 Personas</option>
-                    <option value="3">3 Personas</option>
-                    <option value="4">4 Personas</option>
-                    <option value="5">5 Personas</option>
-                    <option value="6">6 Personas</option>
-                    <option value="7+">7+ Personas</option>
-                  </select>
+                {/* ✅ SECCIÓN DESTACADA: TOTAL + MÉTODO DE PAGO */}
+                <div className="bg-yamid-sand/30 p-4 rounded-lg border border-yamid-gold/30 mt-6">
+                  <div className="flex justify-between items-end mb-3">
+                    <span className="text-gray-700 font-medium">Total a Pagar:</span>
+                    <div className="text-right">
+                      <span className="block text-3xl font-bold text-yamid-palm">
+                        ${finalTotal.toLocaleString()} COP
+                      </span>
+                      <span className="text-xs text-gray-500 block h-4">
+                        {extraNote}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm font-bold text-gray-800">Método de Pago:</label>
+                    <select 
+                      value={paymentMethod}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold font-medium cursor-pointer shadow-sm"
+                    >
+                      <option value="efectivo">💵 Efectivo (Sin recargo)</option>
+                      <option value="transferencia">🏦 Transferencia (Sin recargo)</option>
+                      <option value="tarjeta">💳 Tarjeta de Crédito (+5%)</option>
+                    </select>
+                    
+                    {/* Alerta Visual Dinámica */}
+                    {paymentMethod === 'tarjeta' && (
+                      <div className="mt-2 flex items-start gap-2 text-xs text-yellow-800 bg-yellow-100 p-2 rounded border border-yellow-200">
+                        <span className="font-bold">⚠️ Nota:</span>
+                        El valor total ya incluye el 5% adicional por comisiones bancarias.
+                      </div>
+                    )}
+                  </div>
                 </div>
+                {/* ✅ FIN SECCIÓN DESTACADA */}
 
                 <button 
                   type="submit" 
-                  className="w-full bg-yamid-gold hover:bg-yamid-goldDark text-white py-4 rounded-lg font-bold text-lg transition-colors flex items-center justify-center space-x-2"
+                  className="w-full bg-yamid-gold hover:bg-yamid-goldDark text-white py-4 rounded-lg font-bold text-lg transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
                 >
                   <MessageCircle className="w-5 h-5" />
                   <span>Reservar por WhatsApp</span>
                 </button>
 
-               <button 
+                <button 
                   type="button" 
                   onClick={() => {
-                    const phoneNumber = '573013547422'; // ✅ Mismo número principal
-                    const message = `Hola YAMID Tours 👋\nTengo una consulta sobre el tour: ${tour.name}\n\nMi nombre es: ${customerName || '(Nombre pendiente)'}`;
-                    // ✅ Usamos wa.me y SIN espacios
+                    const phoneNumber = '573013547422';
+                    const message = `Hola YAMID Tours 👋\nTengo una duda sobre: ${tour.name}`;
                     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
                     window.open(url, '_blank', 'noopener,noreferrer');
                   }}
-                  className="w-full border-2 border-yamid-gold text-yamid-gold hover:bg-yamid-gold hover:text-white py-3 rounded-lg font-semibold transition-colors"
+                  className="w-full border-2 border-yamid-gold text-yamid-gold hover:bg-yamid-gold hover:text-white py-3 rounded-lg font-semibold transition-colors text-sm"
                 >
                   Consultar Dudas
                 </button>
               </form>
 
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <div className="flex items-center justify-between text-sm text-gray-600">
-                  <span>Cancelación gratuita</span>
-                  <span className="text-green-600 font-medium">Hasta 24h antes</span>
-                </div>
+              <div className="mt-6 pt-6 border-t border-gray-200 text-xs text-gray-500 text-center">
+                🔒 Tus datos están seguros. Serás redirigido a WhatsApp.
               </div>
             </div>
           </div>

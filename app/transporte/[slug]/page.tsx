@@ -1071,10 +1071,11 @@ export default function TransportDetail() {
   const [serviceDate, setServiceDate] = useState('');
   const [serviceTime, setServiceTime] = useState('');
   const [passengers, setPassengers] = useState('2');
-
-  // ✅ AGREGAR ESTAS DOS LÍNEAS:
+  
+  // ✅ NUEVOS ESTADOS
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('efectivo');
 
   if (!service) {
     return (
@@ -1090,26 +1091,42 @@ export default function TransportDetail() {
     );
   }
 
-   // ✅ Manejar envío de cotización a WhatsApp (Corregido para iOS y Android)
+  // ✅ CÁLCULO DINÁMICO DEL TOTAL
+  // Nota: Como la mayoría de transportes tienen price: 0 ("Por acordar"), 
+  // el cálculo solo mostrará el recargo si hay un precio base definido.
+  const priceNum = service.price || 0;
+  const passengersNum = parseInt(passengers) || 1;
+  const baseTotal = priceNum * passengersNum;
+  
+  let finalTotal = baseTotal;
+  let extraNote = '';
+
+  if (paymentMethod === 'tarjeta') {
+    finalTotal = Math.round(baseTotal * 1.05); // +5%
+    extraNote = 'Incluye 5% por procesamiento con tarjeta.';
+  } else if (paymentMethod === 'transferencia') {
+    extraNote = 'Sin costos adicionales.';
+  } else {
+    extraNote = 'Pago en efectivo el día del servicio.';
+  }
+
+  // ✅ Manejar envío de cotización a WhatsApp
   const handleReservation = (e: React.FormEvent) => {
     e.preventDefault();
 
-
-    // Validación simple
     if (!customerName.trim()) {
       alert('Por favor, escribe tu nombre completo para continuar.');
       return;
     }
-    
-    // ✅ 1. Número limpio sin espacios
-    const phoneNumber = '573013547422'; 
+
+    const phoneNumber = '573013547422';
     
     const message = `🚤 *NUEVA COTIZACIÓN - TRANSPORTE* 🚤
 
-    
-*Datos del Cliente:*
+ *Datos del Cliente:*
 👤 *Nombre:* ${customerName}
 📧 *Email:* ${customerEmail || 'No especificado'}
+💳 *Pago Preferido:* ${paymentMethod.toUpperCase()}
 ━━━━━━━━━━━━━━━━━━━━
  *Detalles del Servicio:*
 ━━━━━━━━━━━━━━━━━━━━
@@ -1119,15 +1136,14 @@ export default function TransportDetail() {
 ⏰ *Hora:* ${serviceTime || 'Por definir'}
 👥 *Pasajeros:* ${passengers}
 ⏱️ *Duración:* ${service.duration}
-💰 *Valor:* ${service.priceText}
+💰 *Valor Base:* ${service.priceText}
+💵 *TOTAL ESTIMADO:* $${finalTotal.toLocaleString()} COP
+${paymentMethod === 'tarjeta' && baseTotal > 0 ? '⚠️ (Incluye recargo 5% tarjeta)' : ''}
 ━━━━━━━━━━━━━━━━━━━━
 
 ✅ Quiero confirmar disponibilidad y recibir cotización completa.`;
 
-    // ✅ 2. URL Optimizada: Usamos 'wa.me' y eliminamos espacios
-    // Esto asegura que en iPhone se abra directamente la App de WhatsApp
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
@@ -1192,7 +1208,6 @@ export default function TransportDetail() {
           
           {/* Columna Izquierda - Información */}
           <div className="lg:col-span-2 space-y-8">
-            
             {/* Descripción */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-2xl font-bold text-yamid-palm mb-4">Descripción</h2>
@@ -1269,7 +1284,7 @@ export default function TransportDetail() {
                       const Icon = amenity.icon;
                       return (
                         <li key={index} className="flex items-center gap-2 text-gray-700">
-                          {Icon && <Icon className="w-4 h-4 text-yamid-gold" />}
+                          {Icon && typeof Icon === 'function' && <Icon className="w-4 h-4 text-yamid-gold" />}
                           {amenity.name}
                         </li>
                       );
@@ -1285,7 +1300,7 @@ export default function TransportDetail() {
                       const Icon = amenity.icon;
                       return (
                         <li key={index} className="flex items-center gap-2 text-gray-500">
-                          {Icon && <Icon className="w-4 h-4" />}
+                          {Icon && typeof Icon === 'function' && <Icon className="w-4 h-4" />}
                           {amenity.name}
                         </li>
                       );
@@ -1307,22 +1322,24 @@ export default function TransportDetail() {
                 ))}
               </ul>
             </div>
-
           </div>
 
           {/* Columna Derecha - Formulario */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
-              <div className="mb-6">
-                <p className="text-gray-500 text-sm">Valor desde</p>
-                <p className="text-3xl font-bold text-yamid-palm">{service.priceText}</p>
+            <div className="bg-white rounded-lg shadow-md p-6 sticky top-24 border-t-4 border-yamid-gold">
+              
+              {/* Precio Base (Pequeño, arriba) */}
+              <div className="mb-6 text-center">
+                <p className="text-gray-500 text-sm">Valor base</p>
+                <p className="text-xl font-semibold text-gray-700">{service.priceText}</p>
                 {service.price > 0 && (
-                  <p className="text-xs text-gray-500 mt-1">* Precio base, varía según fecha y pasajeros</p>
+                  <p className="text-xs text-gray-500 mt-1">* Varía según pasajeros y método de pago</p>
                 )}
               </div>
 
-              <form onSubmit={handleReservation} className="space-y-4">
-                  {/* ✅ AGREGAR: Campo Nombre */}
+              <form onSubmit={handleReservation} className="space-y-5">
+                
+                {/* Campos Personales */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-2">Nombre Completo *</label>
                   <input 
@@ -1334,7 +1351,7 @@ export default function TransportDetail() {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
                   />
                 </div>
-                 {/* ✅ AGREGAR: Campo Email */}
+
                 <div>
                   <label className="block text-gray-700 font-medium mb-2">Correo Electrónico</label>
                   <input 
@@ -1345,27 +1362,31 @@ export default function TransportDetail() {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold focus:ring-2 focus:ring-yamid-gold/20"
                   />
                 </div>
-                <div>
-                  <label className="block text-gray-700 font-medium mb-2">Fecha del servicio</label>
-                  <input 
-                    type="date" 
-                    value={serviceDate}
-                    onChange={(e) => setServiceDate(e.target.value)}
-                    min={new Date().toISOString().split('T')[0]}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold"
-                  />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-2">Fecha</label>
+                    <input 
+                      type="date" 
+                      value={serviceDate}
+                      onChange={(e) => setServiceDate(e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
+                      className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-2">Hora</label>
+                    <input 
+                      type="time" 
+                      value={serviceTime}
+                      onChange={(e) => setServiceTime(e.target.value)}
+                      className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold text-sm"
+                    />
+                  </div>
                 </div>
+
                 <div>
-                  <label className="block text-gray-700 font-medium mb-2">Hora preferida</label>
-                  <input 
-                    type="time" 
-                    value={serviceTime}
-                    onChange={(e) => setServiceTime(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700 font-medium mb-2">Número de pasajeros</label>
+                  <label className="block text-gray-700 font-medium mb-2">Pasajeros</label>
                   <select 
                     value={passengers}
                     onChange={(e) => setPassengers(e.target.value)}
@@ -1377,17 +1398,54 @@ export default function TransportDetail() {
                   </select>
                 </div>
 
+                {/* ✅ SECCIÓN DESTACADA: TOTAL + MÉTODO DE PAGO */}
+                <div className="bg-yamid-sand/30 p-4 rounded-lg border border-yamid-gold/30 mt-6">
+                  <div className="flex justify-between items-end mb-3">
+                    <span className="text-gray-700 font-medium">Total Estimado:</span>
+                    <div className="text-right">
+                      <span className="block text-3xl font-bold text-yamid-palm">
+                        ${finalTotal.toLocaleString()} COP
+                      </span>
+                      <span className="text-xs text-gray-500 block h-4">
+                        {extraNote}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm font-bold text-gray-800">Método de Pago:</label>
+                    <select 
+                      value={paymentMethod}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-yamid-gold font-medium cursor-pointer shadow-sm"
+                    >
+                      <option value="efectivo">💵 Efectivo (Sin recargo)</option>
+                      <option value="transferencia">🏦 Transferencia (Sin recargo)</option>
+                      <option value="tarjeta">💳 Tarjeta de Crédito (+5%)</option>
+                    </select>
+                    
+                    {/* Alerta Visual Dinámica */}
+                    {paymentMethod === 'tarjeta' && (
+                      <div className="mt-2 flex items-start gap-2 text-xs text-yellow-800 bg-yellow-100 p-2 rounded border border-yellow-200">
+                        <span className="font-bold">⚠️ Nota:</span>
+                        El valor total ya incluye el 5% adicional por comisiones bancarias.
+                      </div>
+                    )}
+                  </div>
+                </div>
+                {/* ✅ FIN SECCIÓN DESTACADA */}
+
                 <button 
                   type="submit" 
-                  className="w-full bg-yamid-gold hover:bg-yamid-goldDark text-white py-4 rounded-lg font-bold text-lg transition-colors flex items-center justify-center space-x-2"
+                  className="w-full bg-yamid-gold hover:bg-yamid-goldDark text-white py-4 rounded-lg font-bold text-lg transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
                 >
                   <MessageCircle className="w-5 h-5" />
                   <span>Cotizar por WhatsApp</span>
                 </button>
               </form>
 
-              <div className="mt-6 pt-6 border-t border-gray-200 text-sm text-gray-600">
-                <p>💬 Recibirás una cotización personalizada en WhatsApp</p>
+              <div className="mt-6 pt-6 border-t border-gray-200 text-xs text-gray-500 text-center">
+                🔒 Tus datos están seguros. Serás redirigido a WhatsApp.
               </div>
             </div>
           </div>
